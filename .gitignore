@@ -3,6 +3,8 @@
 
 # 依赖目录
 node_modules/
+auto-imports.d.ts
+components.d.ts
 
 # 构建产物
 dist
