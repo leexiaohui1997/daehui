@@ -1,6 +1,10 @@
 <template>
   <div class="site-header">
-    <div class="site-header-left"></div>
+    <div class="site-header-left">
+      <a href="/" class="site-header-left-logo">
+        <img src="@/assets/images/logo.png" alt="logo" />
+      </a>
+    </div>
     <div class="site-header-right">
       <SwitchThemeButton />
     </div>
@@ -28,6 +32,13 @@ import SwitchThemeButton from './SwitchThemeButton.vue'
     justify-content: center;
     box-sizing: border-box;
     padding: 0 @size-6;
+
+    &-logo {
+      display: flex;
+      img {
+        height: 32px;
+      }
+    }
   }
 
   &-right {
