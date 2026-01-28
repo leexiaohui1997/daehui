@@ -14,7 +14,8 @@
     }
   },
   "scripts": {
-    "dev": "concurrently \"pnpm run dev:backend\" \"pnpm run dev:frontend\"",
+    "dev": "concurrently \"pnpm run dev:shared\" \"pnpm run dev:backend\" \"pnpm run dev:frontend\"",
+    "dev:shared": "pnpm -F @daehui/shared run dev",
     "dev:backend": "pnpm -F backend run start:dev",
     "dev:frontend": "pnpm -F frontend run dev",
     "lint": "eslint .",

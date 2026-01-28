@@ -1,3 +1,4 @@
+import { ApiError } from '@daehui/shared'
 import { Controller, Get } from '@nestjs/common'
 
 import { UserService } from './user.service'
@@ -9,6 +10,7 @@ export class UserController {
   @Get('me')
   getMe() {
     // throw new Error('Not implemented')
-    return 'This action returns current user info'
+    throw new ApiError()
+    // return '111'
   }
 }

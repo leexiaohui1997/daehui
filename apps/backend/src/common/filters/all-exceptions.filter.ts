@@ -1,3 +1,4 @@
+import { ApiError } from '@daehui/shared'
 import {
   ArgumentsHost,
   Catch,
@@ -13,6 +14,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const ctx = host.switchToHttp()
     const response = ctx.getResponse<Response>()
 
+    let code = -1
     let message = 'Internal server error'
     let status = HttpStatus.INTERNAL_SERVER_ERROR
 
@@ -26,10 +28,13 @@ export class AllExceptionsFilter implements ExceptionFilter {
             exception.message
     } else if (exception instanceof Error) {
       message = exception.message
+      if (exception instanceof ApiError) {
+        code = exception.code
+      }
     }
 
     response.status(status).json({
-      code: -1,
+      code,
       msg: message,
     })
   }
