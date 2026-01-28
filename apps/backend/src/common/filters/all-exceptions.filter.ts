@@ -30,6 +30,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       message = exception.message
       if (exception instanceof ApiError) {
         code = exception.code
+        status = 200
       }
     }
 

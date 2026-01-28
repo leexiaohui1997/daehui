@@ -12,6 +12,11 @@ async function bootstrap() {
   // 注册全局异常过滤器
   app.useGlobalFilters(new AllExceptionsFilter())
 
+  // 启用 CORS
+  app.enableCors({
+    origin: process.env.CORS_ORIGIN,
+  })
+
   await app.listen(process.env.PORT ?? 3000)
 }
 bootstrap()

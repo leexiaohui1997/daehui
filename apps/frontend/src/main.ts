@@ -4,4 +4,8 @@ import { createApp } from 'vue'
 
 import App from './App.vue'
 
-createApp(App).mount('#app')
+async function bootstrap() {
+  createApp(App).mount('#app')
+}
+
+bootstrap()
