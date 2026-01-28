@@ -1,3 +1,4 @@
+import { ValidationPipe } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 
 import { AppModule } from './app.module'
@@ -11,6 +12,8 @@ async function bootstrap() {
   app.useGlobalInterceptors(new TransformInterceptor())
   // 注册全局异常过滤器
   app.useGlobalFilters(new AllExceptionsFilter())
+  // 注册全局验证管道
+  app.useGlobalPipes(new ValidationPipe())
 
   // 启用 CORS
   app.enableCors({

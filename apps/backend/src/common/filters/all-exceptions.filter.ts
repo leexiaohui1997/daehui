@@ -1,4 +1,4 @@
-import { ApiError } from '@daehui/shared'
+import { API_ERROR_MAP, ApiCode, ApiError } from '@daehui/shared'
 import {
   ArgumentsHost,
   Catch,
@@ -21,11 +21,28 @@ export class AllExceptionsFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       status = exception.getStatus()
       const exceptionResponse = exception.getResponse()
-      message =
-        typeof exceptionResponse === 'string'
-          ? exceptionResponse
-          : (exceptionResponse as { message?: string }).message ||
-            exception.message
+
+      // 处理参数校验错误
+      if (status === HttpStatus.BAD_REQUEST) {
+        code = ApiCode.PARAM_ERROR
+        message = API_ERROR_MAP[code]
+        status = 200
+      }
+
+      const res = exceptionResponse as { message?: string[] }
+      if (
+        typeof res === 'object' &&
+        res !== null &&
+        Array.isArray(res.message)
+      ) {
+        message = res.message[0]
+      } else {
+        message =
+          typeof exceptionResponse === 'string'
+            ? exceptionResponse
+            : (exceptionResponse as { message?: string }).message ||
+              exception.message
+      }
     } else if (exception instanceof Error) {
       message = exception.message
       if (exception instanceof ApiError) {

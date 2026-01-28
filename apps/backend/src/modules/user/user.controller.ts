@@ -1,11 +1,17 @@
 import { ApiError } from '@daehui/shared'
-import { Controller, Get } from '@nestjs/common'
+import { Body, Controller, Get, Post } from '@nestjs/common'
 
+import { RegisterDto } from './dto/register.dto'
 import { UserService } from './user.service'
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @Post('register')
+  async register(@Body() dto: RegisterDto) {
+    return this.userService.register(dto)
+  }
 
   @Get('me')
   getMe() {
