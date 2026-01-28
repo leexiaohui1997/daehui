@@ -31,6 +31,7 @@ lerna-debug.log*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
+.trae/documents/
 .idea
 *.suo
 *.ntvs*
