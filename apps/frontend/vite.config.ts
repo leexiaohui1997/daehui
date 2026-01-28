@@ -23,8 +23,7 @@ export default defineConfig({
     preprocessorOptions: {
       less: {
         modifyVars: {
-          'arcoblue-6': '#0060c6ff',
-          hack: 'true; @import "@arco-design/web-vue/lib/style/theme/global.less";',
+          hack: 'true; @import "@/assets/less/global.less";',
         },
         javascriptEnabled: true,
       },
