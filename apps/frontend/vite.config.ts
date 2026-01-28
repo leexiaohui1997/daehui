@@ -24,9 +24,15 @@ export default defineConfig({
       less: {
         modifyVars: {
           'arcoblue-6': '#0060c6ff',
+          hack: 'true; @import "@arco-design/web-vue/lib/style/theme/global.less";',
         },
         javascriptEnabled: true,
       },
+    },
+  },
+  resolve: {
+    alias: {
+      '@': '/src',
     },
   },
 })

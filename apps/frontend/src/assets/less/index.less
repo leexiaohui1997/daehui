@@ -1,7 +1,19 @@
+@import '@arco-design/web-vue/lib/style/theme/css-variables.less';
+
 body {
-  margin: var(--size-none);
+  margin: @size-none;
   background: var(--color-bg-1);
   color: var(--color-text-1);
-  font-size: var(--font-size-body-3);
-  font-weight: var(--font-weight-400);
+  font-size: @font-size-body-3;
+  font-weight: @font-weight-400;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+}
+
+#app {
+  overflow: auto;
 }

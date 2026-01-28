@@ -3,9 +3,14 @@ import './assets/less/index.less'
 import { createApp } from 'vue'
 
 import App from './App.vue'
+import router from './router'
 
 async function bootstrap() {
-  createApp(App).mount('#app')
+  const app = createApp(App)
+
+  app.use(router)
+
+  app.mount('#app')
 }
 
 bootstrap()

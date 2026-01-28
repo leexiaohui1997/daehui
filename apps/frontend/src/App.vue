@@ -1,5 +1,3 @@
 <template>
-  <div>
-    <a-button type="primary">Primary Button</a-button>
-  </div>
+  <router-view />
 </template>
