@@ -6,4 +6,10 @@ export type MenuItemRaw = {
   children?: MenuItemRaw[]
 }
 
-export const ADMIN_MENU: MenuItemRaw[] = []
+export enum MenuType {
+  Admin = 'admin',
+}
+
+export const MENU_CONFIGS: Record<MenuType, MenuItemRaw[]> = {
+  [MenuType.Admin]: [],
+}
