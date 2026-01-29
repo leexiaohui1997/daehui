@@ -88,4 +88,12 @@ export class UserService {
 
     return { token }
   }
+
+  /**
+   * 用户登出
+   * @param userId 用户 ID
+   */
+  async logout(userId: number): Promise<void> {
+    await this.redisService.del(`auth:token:${userId}`)
+  }
 }

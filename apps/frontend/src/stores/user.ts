@@ -41,11 +41,23 @@ export const useUserStore = defineStore('user', () => {
     userInfo.value = null
   }
 
+  /**
+   * 登出逻辑
+   */
+  async function logout() {
+    try {
+      await userApi.logout()
+    } finally {
+      clear()
+    }
+  }
+
   return {
     token,
     userInfo,
     setToken,
     fetchUserInfo,
     clear,
+    logout,
   }
 })

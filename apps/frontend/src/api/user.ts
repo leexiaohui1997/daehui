@@ -18,6 +18,11 @@ class UserApi {
    * 获取当前用户信息
    */
   me = requestUtils.defineFunc<void, RspUserInfo>('get', '/user/me')
+
+  /**
+   * 登出
+   */
+  logout = requestUtils.defineFunc<void, void>('post', '/user/logout')
 }
 
 export const userApi = new UserApi()

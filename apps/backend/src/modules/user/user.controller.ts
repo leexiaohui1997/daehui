@@ -29,4 +29,10 @@ export class UserController {
       isAdmin: user.isAdmin,
     }
   }
+
+  @Post('logout')
+  @UseGuards(AuthGuard)
+  async logout(@CurrentUser() user: UserInfo) {
+    return this.userService.logout(user.sub)
+  }
 }
