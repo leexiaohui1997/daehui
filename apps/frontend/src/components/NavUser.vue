@@ -5,7 +5,7 @@
         <div class="user-avatar">
           <a-avatar
             :size="32"
-            :style="{ backgroundColor: 'var(--color-primary-light-1)' }">
+            :style="{ backgroundColor: 'var(--color-primary-light-2)' }">
             {{ userStore.userInfo.username[0]?.toUpperCase() }}
           </a-avatar>
         </div>

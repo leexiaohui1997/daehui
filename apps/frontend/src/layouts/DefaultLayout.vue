@@ -20,14 +20,21 @@ import SiteHeader from '@/components/SiteHeader.vue'
   height: 100%;
   display: flex;
   flex-direction: column;
+  background: var(--color-bg-1);
 }
 
 .default-layout-main {
   flex: 1;
   display: flex;
+  gap: 2px;
 }
 
 .default-layout-main-content {
   flex: 1;
+  width: 0;
+  height: 100%;
+  background: var(--color-bg-2);
+  border-radius: @border-radius-large;
+  overflow: auto;
 }
 </style>
