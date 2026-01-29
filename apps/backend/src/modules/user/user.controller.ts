@@ -1,8 +1,10 @@
-import { ApiError } from '@daehui/shared'
-import { Body, Controller, Get, Post } from '@nestjs/common'
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common'
 
+import { CurrentUser } from '../../common/decorators/current-user.decorator'
+import { AuthGuard } from '../../common/guards/auth.guard'
 import { LoginDto } from './dto/login.dto'
 import { RegisterDto } from './dto/register.dto'
+import { UserInfo } from './interfaces/user-info.interface'
 import { UserService } from './user.service'
 
 @Controller('user')
@@ -20,9 +22,11 @@ export class UserController {
   }
 
   @Get('me')
-  getMe() {
-    // throw new Error('Not implemented')
-    throw new ApiError()
-    // return '111'
+  @UseGuards(AuthGuard)
+  getMe(@CurrentUser() user: UserInfo) {
+    return {
+      username: user.username,
+      isAdmin: user.isAdmin,
+    }
   }
 }

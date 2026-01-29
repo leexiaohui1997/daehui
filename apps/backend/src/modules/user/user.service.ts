@@ -74,7 +74,11 @@ export class UserService {
     }
 
     // 生成 Token
-    const payload = { sub: user.id, username: user.username }
+    const payload = {
+      sub: user.id,
+      username: user.username,
+      isAdmin: user.isAdmin,
+    }
     const token = await this.jwtService.signAsync(payload)
 
     // 存入 Redis，Key 为 auth:token:${userId}，过期时间与 JWT 一致
