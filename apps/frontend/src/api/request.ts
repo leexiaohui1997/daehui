@@ -1,4 +1,4 @@
-import { ApiCode, RequestUtils } from '@daehui/shared'
+import { ApiCode, ApiError, RequestUtils } from '@daehui/shared'
 
 import router from '@/router'
 import { useUserStore } from '@/stores/user'
@@ -22,9 +22,8 @@ requestUtils.$axios.interceptors.request.use(config => {
 requestUtils.$axios.interceptors.response.use(
   res => res,
   async error => {
-    const { response } = error
-    if (response) {
-      const { code } = response.data
+    if (error instanceof ApiError) {
+      const { code } = error
       const userStore = useUserStore()
       const currentRoute = router.currentRoute.value
 
