@@ -25,6 +25,11 @@
         </a-input-password>
       </a-form-item>
       <a-form-item>
+        <div class="login-options">
+          <a-checkbox v-model="form.remember">记住账号</a-checkbox>
+        </div>
+      </a-form-item>
+      <a-form-item>
         <a-button type="primary" html-type="submit" long :loading="loading">
           登录
         </a-button>
@@ -36,7 +41,7 @@
 <script setup lang="ts">
 import { Message } from '@arco-design/web-vue'
 import { getErrorMsg } from '@daehui/shared'
-import { reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { userApi } from '@/api/user'
@@ -46,10 +51,21 @@ const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
 
+const REMEMBER_USERNAME_KEY = 'remember-username'
+
 const loading = ref(false)
 const form = reactive({
   username: '',
   password: '',
+  remember: false,
+})
+
+onMounted(() => {
+  const savedUsername = localStorage.getItem(REMEMBER_USERNAME_KEY)
+  if (savedUsername) {
+    form.username = savedUsername
+    form.remember = true
+  }
 })
 
 /**
@@ -69,9 +85,16 @@ const handleSubmit = async ({ errors }: { errors: unknown }) => {
     // 3. 获取用户信息
     await userStore.fetchUserInfo()
 
+    // 4. 记住账号逻辑
+    if (form.remember) {
+      localStorage.setItem(REMEMBER_USERNAME_KEY, form.username)
+    } else {
+      localStorage.removeItem(REMEMBER_USERNAME_KEY)
+    }
+
     Message.success('登录成功')
 
-    // 4. 重定向
+    // 5. 重定向
     const redirect = route.query.redirect as string
     router.replace(redirect || '/admin')
   } catch (error: unknown) {
@@ -92,6 +115,13 @@ const handleSubmit = async ({ errors }: { errors: unknown }) => {
     text-align: center;
     font-size: @font-size-title-1;
     font-weight: @font-weight-500;
+  }
+
+  .login-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
   }
 }
 </style>
