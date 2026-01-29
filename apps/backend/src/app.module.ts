@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
+import { PermissionModule } from './modules/permission/permission.module'
 import { RedisModule } from './modules/redis/redis.module'
 import { UserModule } from './modules/user/user.module'
 
@@ -26,6 +27,7 @@ import { UserModule } from './modules/user/user.module'
     }),
     RedisModule,
     UserModule,
+    PermissionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

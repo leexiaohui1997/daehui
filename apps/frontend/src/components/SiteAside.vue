@@ -35,7 +35,7 @@ const menu = computed(() =>
 )
 
 const activeMenu = computed(
-  () => (route.meta.belongMenu as string) || (route.name as string),
+  () => (route.meta.belongMenu as string) || (route.name as string) || '',
 )
 const activeMenuRoot = computed(
   () =>
