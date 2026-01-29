@@ -8,6 +8,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import { useThemeStore } from './stores/theme'
+import { useUserStore } from './stores/user'
 
 async function bootstrap() {
   const app = createApp(App)
@@ -19,6 +20,9 @@ async function bootstrap() {
 
   const theme = useThemeStore()
   theme.init()
+
+  const user = useUserStore()
+  await user.fetchUserInfo()
 
   app.mount('#app')
 }
