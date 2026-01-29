@@ -6,6 +6,8 @@ declare module 'vue-router' {
     requiresAuth?: boolean
     /** 是否只允许未登录用户访问（如登录页） */
     guestOnly?: boolean
+    /** 是否需要管理员权限 */
+    requiresAdmin?: boolean
   }
 }
 
@@ -13,8 +15,13 @@ export const routes: RouteRecordRaw[] = [
   {
     path: '/admin',
     component: () => import('@/layouts/DefaultLayout.vue'),
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, requiresAdmin: true },
     children: [],
+  },
+  {
+    path: '/forbidden',
+    name: 'Forbidden',
+    component: () => import('@/views/ExceptionForbidden.vue'),
   },
   {
     path: '/login',

@@ -31,7 +31,6 @@ router.beforeEach(async (to, _from, next) => {
     if (!userStore.userInfo) {
       try {
         await userStore.fetchUserInfo()
-        return next()
       } catch {
         // 拉取失败（如 Token 过期），清理登录态并重定向
         userStore.clear()
@@ -40,6 +39,11 @@ router.beforeEach(async (to, _from, next) => {
           query: { redirect: to.fullPath },
         })
       }
+    }
+
+    // 3. 验证管理员权限
+    if (to.meta.requiresAdmin && !userStore.userInfo?.isAdmin) {
+      return next({ name: 'Forbidden' })
     }
   }
 
