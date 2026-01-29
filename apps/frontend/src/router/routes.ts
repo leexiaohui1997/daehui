@@ -18,11 +18,11 @@ export const routes: RouteRecordRaw[] = [
   },
   {
     path: '/login',
-    name: 'Login',
     component: () => import('@/layouts/AuthLayout.vue'),
     children: [
       {
         path: '',
+        name: 'Login',
         component: () => import('@/views/UserLogin.vue'),
         meta: { guestOnly: true },
       },

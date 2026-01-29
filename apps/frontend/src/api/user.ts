@@ -6,6 +6,17 @@ export type RspUserInfo = {
 }
 
 class UserApi {
+  /**
+   * 登录
+   */
+  login = requestUtils.defineFunc<
+    { username: string; password: string },
+    { token: string }
+  >('post', '/user/login')
+
+  /**
+   * 获取当前用户信息
+   */
   me = requestUtils.defineFunc<void, RspUserInfo>('get', '/user/me')
 }
 

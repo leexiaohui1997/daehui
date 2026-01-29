@@ -21,7 +21,7 @@ export class RequestUtils {
       const { code, msg, data } = res.data
       if (code !== 0) {
         if (ApiCode[code]) {
-          throw new ApiError(code)
+          throw new ApiError(code, msg)
         }
 
         throw new Error(msg)
@@ -37,17 +37,28 @@ export class RequestUtils {
     headers?: AxiosHeaders,
   ) {
     return (data: D): Promise<R> => {
-      return this.$axios[method](url, {
-        params: {
-          ...(method === 'get' ? data : {}),
+      if (method === 'get') {
+        return this.$axios[method](url, {
+          params: {
+            ...(method === 'get' ? data : {}),
+          },
+          headers: {
+            ...headers,
+          },
+        })
+      }
+
+      return this.$axios[method](
+        url,
+        {
+          ...(data || {}),
         },
-        data: {
-          ...(method !== 'get' ? data : {}),
+        {
+          headers: {
+            ...headers,
+          },
         },
-        headers: {
-          ...headers,
-        },
-      })
+      )
     }
   }
 }
