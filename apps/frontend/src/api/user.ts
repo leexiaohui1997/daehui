@@ -15,6 +15,14 @@ class UserApi {
   >('post', '/user/login')
 
   /**
+   * 注册
+   */
+  register = requestUtils.defineFunc<
+    { username: string; password: string },
+    void
+  >('post', '/user/register')
+
+  /**
    * 获取当前用户信息
    */
   me = requestUtils.defineFunc<void, RspUserInfo>('get', '/user/me')

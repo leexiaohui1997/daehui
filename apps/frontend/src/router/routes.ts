@@ -26,6 +26,12 @@ export const routes: RouteRecordRaw[] = [
         component: () => import('@/views/UserLogin.vue'),
         meta: { guestOnly: true },
       },
+      {
+        path: '/register',
+        name: 'Register',
+        component: () => import('@/views/UserRegister.vue'),
+        meta: { guestOnly: true },
+      },
     ],
   },
 ]
