@@ -7,11 +7,13 @@
     </div>
     <div class="site-header-right">
       <SwitchThemeButton />
+      <NavUser />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import NavUser from './NavUser.vue'
 import SwitchThemeButton from './SwitchThemeButton.vue'
 </script>
 

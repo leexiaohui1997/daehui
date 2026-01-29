@@ -14,7 +14,7 @@
       </a-doption>
       <a-doption @click="handleSelect('dark')">
         <div class="option">
-          <icon-moon class="option-icon" />
+          <icon-moon-fill class="option-icon" />
           <span>暗黑模式</span>
         </div>
       </a-doption>
@@ -43,7 +43,7 @@ const theme = useThemeStore()
  */
 const currentIcon = computed(() => {
   const m = theme.mode
-  if (m === 'dark') return 'icon-moon'
+  if (m === 'dark') return 'icon-moon-fill'
   if (m === 'system') return 'icon-desktop'
   return 'icon-sun-fill'
 })
