@@ -1,10 +1,14 @@
-import { ApiCode, ApiError } from '@daehui/shared'
+import { ApiCode, ApiError, parseTimeToSeconds } from '@daehui/shared'
 import { Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { JwtService } from '@nestjs/jwt'
 import { InjectRepository } from '@nestjs/typeorm'
 import * as bcrypt from 'bcrypt'
 import { Repository } from 'typeorm'
 
 import { User } from '../../entities/user/user.entity'
+import { RedisService } from '../redis/redis.service'
+import { LoginDto } from './dto/login.dto'
 import { RegisterDto } from './dto/register.dto'
 
 @Injectable()
@@ -12,6 +16,9 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly jwtService: JwtService,
+    private readonly redisService: RedisService,
+    private readonly configService: ConfigService,
   ) {}
 
   /**
@@ -41,5 +48,40 @@ export class UserService {
     })
 
     await this.userRepository.save(user)
+  }
+
+  /**
+   * 用户登录
+   * @param dto 登录信息
+   */
+  async login(dto: LoginDto): Promise<{ token: string }> {
+    const { username, password } = dto
+
+    // 查询用户并包含密码
+    const user = await this.userRepository.findOne({
+      where: { username },
+      select: ['id', 'username', 'password', 'isAdmin'],
+    })
+
+    if (!user) {
+      throw new ApiError(ApiCode.LOGIN_FAILED)
+    }
+
+    // 校验密码
+    const isPasswordValid = await bcrypt.compare(password, user.password)
+    if (!isPasswordValid) {
+      throw new ApiError(ApiCode.LOGIN_FAILED)
+    }
+
+    // 生成 Token
+    const payload = { sub: user.id, username: user.username }
+    const token = await this.jwtService.signAsync(payload)
+
+    // 存入 Redis，Key 为 auth:token:${userId}，过期时间与 JWT 一致
+    const expiresIn = this.configService.get<string>('JWT_EXPIRES_IN', '7d')
+    const ttl = parseTimeToSeconds(expiresIn)
+    await this.redisService.set(`auth:token:${user.id}`, token, ttl)
+
+    return { token }
   }
 }
