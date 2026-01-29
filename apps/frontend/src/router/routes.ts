@@ -8,6 +8,8 @@ declare module 'vue-router' {
     guestOnly?: boolean
     /** 是否需要管理员权限 */
     requiresAdmin?: boolean
+    /** 所属菜单项的 name */
+    belongMenu?: string
   }
 }
 
@@ -15,7 +17,7 @@ export const routes: RouteRecordRaw[] = [
   {
     path: '/admin',
     component: () => import('@/layouts/DefaultLayout.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true },
+    meta: { requiresAuth: true, requiresAdmin: true, belongMenu: 'UserList' },
     children: [],
   },
   {

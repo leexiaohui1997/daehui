@@ -1,6 +1,9 @@
 <template>
   <div class="exception-forbidden">
-    <a-result status="403" title="权限不足" subtitle="抱歉，您没有权限访问该页面">
+    <a-result
+      status="403"
+      title="权限不足"
+      subtitle="抱歉，您没有权限访问该页面">
       <template #extra>
         <a-space>
           <a-button type="primary" @click="goHome">返回首页</a-button>
