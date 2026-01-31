@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { JwtModule } from '@nestjs/jwt'
-import { TypeOrmModule } from '@nestjs/typeorm'
 import type { StringValue } from 'ms'
 
+import { TypeOrmExModule } from '../../common/database/typeorm-ex.module'
 import { User } from '../../entities/user/user.entity'
 import { UserController } from './user.controller'
 import { UserService } from './user.service'
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmExModule.forFeature([User]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

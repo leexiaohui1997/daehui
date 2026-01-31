@@ -2,10 +2,10 @@ import { ApiCode, ApiError, parseTimeToSeconds } from '@daehui/shared'
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
-import { InjectRepository } from '@nestjs/typeorm'
 import * as bcrypt from 'bcrypt'
-import { Repository } from 'typeorm'
 
+import { BaseRepository } from '../../common/database/base.repository'
+import { InjectBaseRepository } from '../../common/database/base-repository.decorator'
 import { User } from '../../entities/user/user.entity'
 import { RedisService } from '../redis/redis.service'
 import { LoginDto } from './dto/login.dto'
@@ -14,8 +14,8 @@ import { RegisterDto } from './dto/register.dto'
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    @InjectBaseRepository(User)
+    private readonly userRepository: BaseRepository<User>,
     private readonly jwtService: JwtService,
     private readonly redisService: RedisService,
     private readonly configService: ConfigService,
