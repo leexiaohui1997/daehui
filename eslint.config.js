@@ -43,6 +43,9 @@ export default [
     languageOptions: {
       parserOptions: {
         parser: tseslint.parser,
+        ecmaFeatures: {
+          jsx: true,
+        },
       },
     },
     rules: {
