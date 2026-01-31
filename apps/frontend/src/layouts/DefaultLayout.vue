@@ -20,7 +20,7 @@ import SiteHeader from '@/components/SiteHeader.vue'
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: var(--color-bg-1);
+  background: var(--color-bg-2);
 }
 
 .default-layout-main {
@@ -33,7 +33,7 @@ import SiteHeader from '@/components/SiteHeader.vue'
   flex: 1;
   width: 0;
   height: 100%;
-  background: var(--color-bg-2);
+  background: var(--color-bg-1);
   border-radius: @border-radius-large;
   overflow: auto;
 }

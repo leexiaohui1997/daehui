@@ -1,3 +1,4 @@
+import { SortOrderValue } from '@daehui/shared'
 import { Type } from 'class-transformer'
 import {
   IsArray,
@@ -9,8 +10,6 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator'
-
-export type SortOrderValue = 'asc' | 'desc'
 
 /**
  * 排序配置

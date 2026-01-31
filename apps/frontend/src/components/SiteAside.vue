@@ -57,8 +57,9 @@ const handleClickRoot = (item: MenuItemRaw) => {
 @menu-root-size: 56px;
 
 .site-aside {
+  --color-menu-light-bg: var(--color-bg-1);
   width: 260px;
-  background-color: var(--color-bg-1);
+  background-color: var(--color-bg-2);
   display: flex;
 
   &-left {

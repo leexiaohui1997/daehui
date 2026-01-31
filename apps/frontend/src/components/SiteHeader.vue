@@ -20,7 +20,7 @@ import SwitchThemeButton from './SwitchThemeButton.vue'
 <style scoped lang="less">
 .site-header {
   height: 60px;
-  background-color: var(--color-bg-1);
+  background-color: var(--color-bg-2);
   display: flex;
   align-items: center;
   justify-content: space-between;

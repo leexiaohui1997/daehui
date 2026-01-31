@@ -1,5 +1,6 @@
 export * from './constants/regex'
 export * from './errors/ApiError'
+export * from './types/request'
 export * from './utils/array'
 export * from './utils/common'
 export * from './utils/request'
