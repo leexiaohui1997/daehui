@@ -46,9 +46,7 @@ export const useUserStore = defineStore('user', () => {
    */
   async function logout() {
     try {
-      if (localStorage.getItem(TOKEN_KEY)) {
-        await userApi.logout()
-      }
+      await userApi.logout()
     } finally {
       clear()
     }

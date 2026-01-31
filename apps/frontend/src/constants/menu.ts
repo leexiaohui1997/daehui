@@ -20,8 +20,7 @@ export const MENU_CONFIGS: Record<MenuType, MenuItemRaw[]> = {
       children: [
         {
           title: '权限配置',
-          name: 'PermissionConfig',
-          path: '/admin/permission',
+          name: 'auth-config',
         },
         {
           title: '角色配置',
