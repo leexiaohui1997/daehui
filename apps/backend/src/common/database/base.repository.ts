@@ -1,13 +1,8 @@
 import { Injectable } from '@nestjs/common'
-import {
-  EntityManager,
-  EntityTarget,
-  FindOptionsOrder,
-  ObjectLiteral,
-  Repository,
-} from 'typeorm'
+import { EntityManager, EntityTarget, ObjectLiteral, Repository } from 'typeorm'
 
 import { PaginationDto } from '../dto/pagination.dto'
+import { ConditionUtils } from '../utils/condition.util'
 
 @Injectable()
 export class BaseRepository<T extends ObjectLiteral> extends Repository<T> {
@@ -20,21 +15,18 @@ export class BaseRepository<T extends ObjectLiteral> extends Repository<T> {
    * @param dto 分页 DTO
    */
   async findListByDto(dto: PaginationDto) {
-    const { pageSize = 10, sort = [], skip } = dto
-
-    const order: FindOptionsOrder<T> = sort.reduce((acc, item) => {
-      return {
-        ...acc,
-        [item.field]: item.order,
-      }
-    }, {})
-
+    const { pageSize = 10, sort = [], skip, conditions = [] } = dto
     const [list, total] = await this.findAndCount({
-      order,
+      where: ConditionUtils.parse<T>(conditions),
+      order: sort.reduce((acc, item) => {
+        return {
+          ...acc,
+          [item.field]: item.order,
+        }
+      }, {}),
       skip,
       take: pageSize,
     })
-
     return { list, total }
   }
 }

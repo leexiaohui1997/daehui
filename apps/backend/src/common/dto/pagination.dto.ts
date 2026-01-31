@@ -62,6 +62,15 @@ export class PaginationDto {
   sort?: SortDto[] = []
 
   /**
+   * 查询条件
+   * @default []
+   */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  conditions?: string[] = []
+
+  /**
    * 跳过的条数
    */
   get skip(): number {
