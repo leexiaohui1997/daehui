@@ -4,8 +4,10 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
+import { PermissionModule } from './modules/permission/permission.module'
 import { RedisModule } from './modules/redis/redis.module'
 import { UserModule } from './modules/user/user.module'
+import { SharedModule } from './shared/shared.module'
 
 @Module({
   imports: [
@@ -24,8 +26,10 @@ import { UserModule } from './modules/user/user.module'
         synchronize: configService.get<string>('NODE_ENV') === 'development', // 开发环境方便调试，生产环境请关闭
       }),
     }),
+    SharedModule,
     RedisModule,
     UserModule,
+    PermissionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

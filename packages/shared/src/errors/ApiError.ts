@@ -10,6 +10,7 @@ export enum ApiCode {
   // 业务错误码
   USER_ALREADY_EXISTS = 10001,
   LOGIN_FAILED = 10002,
+  PERMISSION_ALREADY_EXISTS = 10003,
 }
 
 export const API_ERROR_MAP: Record<ApiCode, string> = {
@@ -21,6 +22,7 @@ export const API_ERROR_MAP: Record<ApiCode, string> = {
 
   [ApiCode.USER_ALREADY_EXISTS]: '用户已存在',
   [ApiCode.LOGIN_FAILED]: '用户名或密码错误',
+  [ApiCode.PERMISSION_ALREADY_EXISTS]: '权限已存在',
 }
 
 export class ApiError extends Error {
