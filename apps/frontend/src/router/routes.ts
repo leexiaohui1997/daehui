@@ -11,7 +11,16 @@ export const routes: RouteRecordRaw[] = [
       requiresAdmin: true,
       menuType: MenuType.Admin,
     },
-    children: [],
+    children: [
+      {
+        path: 'permission',
+        name: 'PermissionList',
+        component: () => import('@/views/permission/PermissionList.vue'),
+        meta: {
+          belongMenu: 'auth-config',
+        },
+      },
+    ],
   },
   {
     path: '/login',
