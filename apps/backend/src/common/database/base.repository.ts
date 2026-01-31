@@ -15,7 +15,8 @@ export class BaseRepository<T extends ObjectLiteral> extends Repository<T> {
    * @param dto 分页 DTO
    */
   async findListByDto(dto: PaginationDto) {
-    const { pageSize = 10, sort = [], skip, conditions = [] } = dto
+    const { page = 1, pageSize = 10, sort = [], conditions = [] } = dto
+    const skip = (page - 1) * pageSize
     const [list, total] = await this.findAndCount({
       where: ConditionUtils.parse<T>(conditions),
       order: sort.reduce((acc, item) => {

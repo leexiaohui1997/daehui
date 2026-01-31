@@ -5,6 +5,16 @@
       :data="listData"
       :loading="loading"
       :pagination="false" />
+
+    <a-space fill direction="vertical" align="end">
+      <a-pagination
+        v-model:page-size="pageSize"
+        v-model:current="page"
+        :total="total"
+        :show-total="true"
+        :show-jumper="true"
+        :show-page-size="true" />
+    </a-space>
   </div>
 </template>
 
@@ -15,7 +25,7 @@ import {
   type PaginationParams,
   type PaginationResponse,
 } from '@daehui/shared'
-import { computed, onMounted, ref, shallowRef } from 'vue'
+import { computed, effect, ref, shallowRef, watch } from 'vue'
 
 import type { Column } from '@/utils/list-module'
 
@@ -32,6 +42,8 @@ const total = ref(0)
 const listData = shallowRef<T[]>([])
 const loading = ref(false)
 
+effect(() => console.log(page.value))
+
 const requestParams = computed<PaginationParams>(() => ({
   page: page.value,
   pageSize: pageSize.value,
@@ -44,6 +56,7 @@ const fetchList = async () => {
     return
   }
 
+  console.log(requestParams.value)
   try {
     loading.value = true
     const res = await props.listMethod(requestParams.value)
@@ -56,9 +69,7 @@ const fetchList = async () => {
   }
 }
 
-onMounted(() => {
-  fetchList()
-})
+watch(requestParams, fetchList, { deep: true, immediate: true })
 </script>
 
 <style lang="less" scoped>
