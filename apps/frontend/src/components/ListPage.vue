@@ -7,7 +7,10 @@
       :pagination="false"
       :operate-column="tableOperateColumn">
       <template v-if="$slots['table-operate']" #table-operate="scope">
-        <slot name="table-operate" v-bind="scope" />
+        <slot
+          name="table-operate"
+          :on-edit="() => editRow(scope.row)"
+          v-bind="scope" />
       </template>
     </ListPageTable>
 
@@ -21,25 +24,55 @@
         :show-page-size="true" />
     </a-space>
   </div>
+
+  <a-modal
+    v-model:visible="modalVisible"
+    :title="modalTitle"
+    @before-ok="onModalBeforeOk">
+    <a-form
+      ref="create-form"
+      :model="[modalFormValue as Record<string, unknown>][0]!"
+      :rules="createFormRules">
+      <slot name="create-form" :form-value="modalFormValue" :is-edit="isEdit" />
+    </a-form>
+  </a-modal>
 </template>
 
-<script setup lang="ts" generic="T">
-import { Message } from '@arco-design/web-vue'
+<script lang="ts">
+import { FieldRule, Message, TableData } from '@arco-design/web-vue'
 import {
   getErrorMsg,
   type PaginationParams,
   type PaginationResponse,
 } from '@daehui/shared'
-import { computed, ref, shallowRef, watch } from 'vue'
+import { pick } from 'lodash-es'
+import { computed, ref, shallowRef, useTemplateRef, watch } from 'vue'
 
 import type { Column } from '@/utils/list-module'
 
 import ListPageTable from './ListPageTable.vue'
 
+export enum ModalType {
+  Create = 1,
+  Update = 2,
+}
+
+const MODAL_TYPE_LABEL_MAP: Record<ModalType, string> = {
+  [ModalType.Create]: '创建',
+  [ModalType.Update]: '编辑',
+}
+</script>
+
+<script setup lang="ts" generic="T extends TableData, C extends Partial<T>">
 const props = defineProps<{
-  listMethod: (params: PaginationParams) => Promise<PaginationResponse<T>>
+  entityName: string
   tableColumns?: Column<T>[]
   tableOperateColumn?: Partial<Column<T>>
+  createFormInitData?: C
+  createFormRules?: Record<string, FieldRule | FieldRule[]>
+  listMethod?: (params: PaginationParams) => Promise<PaginationResponse<T>>
+  createMethod?: (data: C) => Promise<unknown>
+  updateMethod?: (data: C, row: T) => Promise<unknown>
 }>()
 
 const page = ref(1)
@@ -62,9 +95,11 @@ const fetchList = async () => {
 
   try {
     loading.value = true
-    const res = await props.listMethod(requestParams.value)
-    listData.value = res.list
-    total.value = res.total
+    const res = await props.listMethod?.(requestParams.value)
+    if (res) {
+      listData.value = res.list
+      total.value = res.total
+    }
   } catch (error) {
     Message.error(getErrorMsg(error))
   } finally {
@@ -73,6 +108,62 @@ const fetchList = async () => {
 }
 
 watch(requestParams, fetchList, { deep: true, immediate: true })
+
+const modalType = ref<ModalType>()
+const editingRow = ref<T>()
+
+const modalVisible = computed({
+  get: () => !!modalType.value,
+  set: () => {
+    modalType.value = undefined
+    editingRow.value = undefined
+  },
+})
+const modalTitle = computed(() => {
+  if (!modalType.value) return ''
+  return `${MODAL_TYPE_LABEL_MAP[modalType.value]}${props.entityName}`
+})
+const modalFormValue = ref<C>({
+  ...(props.createFormInitData as C),
+})
+
+const isEdit = computed(() => modalType.value === ModalType.Update)
+const modalRef = useTemplateRef('create-form')
+const modalLoading = ref(false)
+
+const onModalBeforeOk = async () => {
+  if (modalLoading.value) return false
+  if (!modalType.value) return false
+
+  try {
+    const validateErrors = await modalRef.value?.validate?.()
+    if (validateErrors) {
+      return false
+    }
+
+    modalLoading.value = true
+
+    if (modalType.value === ModalType.Create) {
+      await props.createMethod?.(modalFormValue.value)
+    } else if (editingRow.value) {
+      await props.updateMethod?.(modalFormValue.value, editingRow.value)
+    }
+
+    Message.success(`${modalTitle.value}成功`)
+    fetchList()
+  } catch (error) {
+    Message.error(getErrorMsg(error))
+    return false
+  } finally {
+    modalLoading.value = false
+  }
+}
+
+const editRow = (row: T) => {
+  modalType.value = ModalType.Update
+  editingRow.value = row
+  modalFormValue.value = { ...pick(row, ...Object.keys(modalFormValue.value)) }
+}
 </script>
 
 <style lang="less" scoped>

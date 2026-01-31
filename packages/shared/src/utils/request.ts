@@ -31,12 +31,14 @@ export class RequestUtils {
     })
   }
 
-  defineFunc<D = void, R = void>(
+  defineFunc<D = void, R = void, P = void>(
     method: RequestMethod,
-    url: string,
+    surl: string | ((params: P) => string),
     headers?: AxiosHeaders,
   ) {
-    return (data: D): Promise<R> => {
+    return (data: D, params: P): Promise<R> => {
+      const url = typeof surl === 'function' ? surl(params) : surl
+
       if (method === 'get') {
         return this.$axios[method](url, {
           params: {

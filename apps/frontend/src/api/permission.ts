@@ -5,7 +5,7 @@ import { requestUtils } from './request'
 export type PermissionEntity = {
   id: number
   name: string
-  code: string
+  title: string
   description?: string
   createdAt: string
   updatedAt: string
@@ -16,6 +16,12 @@ class PermissionApi {
     PaginationParams,
     PaginationResponse<PermissionEntity>
   >('post', '/permissions')
+
+  update = requestUtils.defineFunc<
+    Pick<PermissionEntity, 'name' | 'title' | 'description'>,
+    void,
+    { id: number }
+  >('patch', ({ id }) => `/permissions/${id}`)
 }
 
 export const permissionApi = new PermissionApi()

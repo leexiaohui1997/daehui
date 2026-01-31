@@ -1,3 +1,4 @@
+import { TableColumnData } from '@arco-design/web-vue'
 import dayjs from 'dayjs'
 
 export enum ColumnFormatType {
@@ -7,16 +8,9 @@ export enum ColumnFormatType {
 
 export type FormatFunc = (value: unknown) => string
 
-export type Column<T> = {
+export type Column<T> = TableColumnData & {
   // 表格属性
-  dataIndex: keyof T
-  title: string
-  width?: number
-  minWidth?: number
-  ellipsis?: boolean
-  tooltip?: boolean | Record<string, unknown>
-  fixed?: 'left' | 'right'
-
+  dataIndex: keyof T & string
   // 自定义属性
   formatType?: ColumnFormatType
 }

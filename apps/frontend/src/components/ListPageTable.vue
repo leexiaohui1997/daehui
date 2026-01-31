@@ -25,7 +25,8 @@
   </a-table>
 </template>
 
-<script setup lang="ts" generic="T">
+<script setup lang="ts" generic="T extends TableData">
+import { TableData } from '@arco-design/web-vue'
 import { omit } from 'lodash-es'
 import { computed, useSlots } from 'vue'
 
@@ -49,16 +50,20 @@ const slots = useSlots()
 const hasTableOperateSlot = computed(() => !!slots['table-operate'])
 
 const extraColumns = computed(() => {
-  const columns = props.columns.map(column => ({
-    ...omit(column, 'formatType', 'tooltip'),
-    slotName: column.dataIndex,
-    tooltip:
-      column.tooltip === true
-        ? {
-            position: 'br',
-          }
-        : column.tooltip,
-  }))
+  const columns = props.columns.map(column => {
+    const tooltip = column.tooltip ?? true
+    return {
+      ...omit(column, 'formatType', 'tooltip'),
+      slotName: column.dataIndex,
+      ellipsis: column.ellipsis ?? true,
+      tooltip:
+        tooltip === true
+          ? {
+              position: 'br',
+            }
+          : column.tooltip,
+    }
+  })
 
   if (hasTableOperateSlot.value) {
     ;(columns as unknown[]).push({
