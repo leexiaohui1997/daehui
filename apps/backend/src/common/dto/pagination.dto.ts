@@ -1,5 +1,33 @@
 import { Type } from 'class-transformer'
-import { IsInt, IsOptional, Max, Min } from 'class-validator'
+import {
+  IsArray,
+  IsIn,
+  IsInt,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+  ValidateNested,
+} from 'class-validator'
+
+export type SortOrderValue = 'asc' | 'desc'
+
+/**
+ * 排序配置
+ */
+export class SortDto {
+  /**
+   * 排序字段
+   */
+  @IsString()
+  field: string
+
+  /**
+   * 排序方向
+   */
+  @IsIn(['asc', 'desc'])
+  order: SortOrderValue
+}
 
 export class PaginationDto {
   /**
@@ -22,6 +50,16 @@ export class PaginationDto {
   @Max(100)
   @IsOptional()
   pageSize?: number = 10
+
+  /**
+   * 排序配置
+   * @default []
+   */
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => SortDto)
+  @IsOptional()
+  sort?: SortDto[] = []
 
   /**
    * 跳过的条数

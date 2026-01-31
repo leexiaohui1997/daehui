@@ -35,21 +35,12 @@ export class PermissionService {
 
   /**
    * 分页查询权限列表
-   * @param query 查询参数
+   * @param dto 查询参数
    */
   async findList(
-    query: PermissionQueryDto,
+    dto: PermissionQueryDto,
   ): Promise<{ list: Permission[]; total: number }> {
-    const { page = 1, pageSize = 10 } = query
-
-    const [list, total] = await this.permissionRepository.findAndCount({
-      where: {},
-      order: { createdAt: 'DESC' },
-      skip: (page - 1) * pageSize,
-      take: pageSize,
-    })
-
-    return { list, total }
+    return this.permissionRepository.findListByDto(dto)
   }
 
   /**
