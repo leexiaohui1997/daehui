@@ -12,16 +12,18 @@ import { ColumnFormatType } from '@/utils/list-module'
         dataIndex: 'id',
         title: '权限ID',
         width: 100,
+        fixed: 'left',
       },
       {
         dataIndex: 'name',
         title: '权限名称',
-        minWidth: 200,
+        width: 200,
+        fixed: 'left',
       },
       {
         dataIndex: 'description',
         title: '权限描述',
-        minWidth: 360,
+        width: 660,
         ellipsis: true,
         tooltip: true,
       },
@@ -37,5 +39,22 @@ import { ColumnFormatType } from '@/utils/list-module'
         minWidth: 180,
         formatType: ColumnFormatType.DateTime,
       },
-    ]" />
+    ]"
+    :table-operate-column="{ width: 180 }">
+    <template #table-operate>
+      <a-link>
+        <template #icon>
+          <icon-edit />
+        </template>
+        编辑
+      </a-link>
+
+      <a-link status="danger">
+        <template #icon>
+          <icon-delete />
+        </template>
+        删除
+      </a-link>
+    </template>
+  </ListPage>
 </template>

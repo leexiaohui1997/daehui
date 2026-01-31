@@ -5,19 +5,29 @@
     :loading="loading"
     :bordered="true"
     :column-resizable="false"
-    :row-key="'id'">
+    :row-key="'id'"
+    :scroll="{ x: 2000 }">
     <template
       v-for="column in columns"
       :key="column.dataIndex"
       #[column.dataIndex]="{ rowIndex }">
       <span>{{ formatColumnValue(column, rowIndex) || '-' }}</span>
     </template>
+
+    <template #table-operate="{ rowIndex }">
+      <a-space align="center">
+        <slot
+          name="table-operate"
+          :row-index="rowIndex"
+          :row="data[rowIndex]!" />
+      </a-space>
+    </template>
   </a-table>
 </template>
 
 <script setup lang="ts" generic="T">
 import { omit } from 'lodash-es'
-import { computed } from 'vue'
+import { computed, useSlots } from 'vue'
 
 import { type Column, FORMATTER_MAP } from '@/utils/list-module'
 
@@ -26,15 +36,20 @@ const props = withDefaults(
     data?: T[]
     columns?: Column<T>[]
     loading?: boolean
+    operateColumn?: Partial<Column<T>>
   }>(),
   {
     data: () => [],
     columns: () => [],
+    operateColumn: () => ({}),
   },
 )
 
-const extraColumns = computed(() =>
-  props.columns.map(column => ({
+const slots = useSlots()
+const hasTableOperateSlot = computed(() => !!slots['table-operate'])
+
+const extraColumns = computed(() => {
+  const columns = props.columns.map(column => ({
     ...omit(column, 'formatType', 'tooltip'),
     slotName: column.dataIndex,
     tooltip:
@@ -43,8 +58,19 @@ const extraColumns = computed(() =>
             position: 'br',
           }
         : column.tooltip,
-  })),
-)
+  }))
+
+  if (hasTableOperateSlot.value) {
+    ;(columns as unknown[]).push({
+      title: '操作',
+      fixed: 'right',
+      slotName: 'table-operate',
+      ...props.operateColumn,
+    })
+  }
+
+  return columns
+})
 
 const formatColumnValue = (column: Column<T>, rowIndex: number) => {
   const row = props.data[rowIndex]

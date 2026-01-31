@@ -4,7 +4,12 @@
       :columns="tableColumns"
       :data="listData"
       :loading="loading"
-      :pagination="false" />
+      :pagination="false"
+      :operate-column="tableOperateColumn">
+      <template v-if="$slots['table-operate']" #table-operate="scope">
+        <slot name="table-operate" v-bind="scope" />
+      </template>
+    </ListPageTable>
 
     <a-space fill direction="vertical" align="end">
       <a-pagination
@@ -25,7 +30,7 @@ import {
   type PaginationParams,
   type PaginationResponse,
 } from '@daehui/shared'
-import { computed, effect, ref, shallowRef, watch } from 'vue'
+import { computed, ref, shallowRef, watch } from 'vue'
 
 import type { Column } from '@/utils/list-module'
 
@@ -34,6 +39,7 @@ import ListPageTable from './ListPageTable.vue'
 const props = defineProps<{
   listMethod: (params: PaginationParams) => Promise<PaginationResponse<T>>
   tableColumns?: Column<T>[]
+  tableOperateColumn?: Partial<Column<T>>
 }>()
 
 const page = ref(1)
@@ -41,8 +47,6 @@ const pageSize = ref(10)
 const total = ref(0)
 const listData = shallowRef<T[]>([])
 const loading = ref(false)
-
-effect(() => console.log(page.value))
 
 const requestParams = computed<PaginationParams>(() => ({
   page: page.value,
@@ -56,7 +60,6 @@ const fetchList = async () => {
     return
   }
 
-  console.log(requestParams.value)
   try {
     loading.value = true
     const res = await props.listMethod(requestParams.value)

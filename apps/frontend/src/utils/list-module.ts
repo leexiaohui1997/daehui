@@ -15,6 +15,7 @@ export type Column<T> = {
   minWidth?: number
   ellipsis?: boolean
   tooltip?: boolean | Record<string, unknown>
+  fixed?: 'left' | 'right'
 
   // 自定义属性
   formatType?: ColumnFormatType
