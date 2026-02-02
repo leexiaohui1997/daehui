@@ -14,7 +14,10 @@ import { ColumnFormatType } from '@/utils/list-module'
       {
         dataIndex: 'id',
         title: '权限ID',
-        width: 80,
+        width: 100,
+        sortable: {
+          sortDirections: ['ascend', 'descend'],
+        },
         fixed: 'left',
       },
       {
@@ -38,12 +41,18 @@ import { ColumnFormatType } from '@/utils/list-module'
         dataIndex: 'createdAt',
         title: '创建时间',
         minWidth: 180,
+        sortable: {
+          sortDirections: ['ascend', 'descend'],
+        },
         formatType: ColumnFormatType.DateTime,
       },
       {
         dataIndex: 'updatedAt',
         title: '更新时间',
         minWidth: 180,
+        sortable: {
+          sortDirections: ['ascend', 'descend'],
+        },
         formatType: ColumnFormatType.DateTime,
       },
     ]"

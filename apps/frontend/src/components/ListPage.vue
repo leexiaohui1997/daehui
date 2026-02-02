@@ -11,7 +11,8 @@
       :data="listData"
       :loading="loading"
       :pagination="false"
-      :operate-column="tableOperateColumn">
+      :operate-column="tableOperateColumn"
+      @sorter-change="onSorterChange">
       <template v-if="$slots['table-operate']" #table-operate="scope">
         <slot
           name="table-operate"
@@ -50,6 +51,7 @@ import {
   getErrorMsg,
   type PaginationParams,
   type PaginationResponse,
+  type SortOrderValue,
 } from '@daehui/shared'
 import { pick } from 'lodash-es'
 import { computed, ref, shallowRef, useTemplateRef, watch } from 'vue'
@@ -86,12 +88,27 @@ const pageSize = ref(10)
 const total = ref(0)
 const listData = shallowRef<T[]>([])
 const loading = ref(false)
+const sortState = ref<PaginationParams['sort']>([])
+
+const onSorterChange = (dataIndex: string, direction: string) => {
+  if (!direction) {
+    sortState.value = []
+    return
+  }
+
+  sortState.value = [
+    {
+      field: dataIndex,
+      order: (direction === 'ascend' ? 'asc' : 'desc') as SortOrderValue,
+    },
+  ]
+}
 
 const requestParams = computed<PaginationParams>(() => ({
   page: page.value,
   pageSize: pageSize.value,
   conditions: [],
-  sort: [],
+  sort: sortState.value,
 }))
 
 const fetchList = async () => {

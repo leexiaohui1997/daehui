@@ -6,7 +6,10 @@
     :bordered="true"
     :column-resizable="false"
     :row-key="'id'"
-    :scroll="{ x: 2000 }">
+    :scroll="{ x: 2000 }"
+    @sorter-change="
+      (dataIndex, direction) => emits('sorterChange', dataIndex, direction)
+    ">
     <template
       v-for="column in columns"
       :key="column.dataIndex"
@@ -45,6 +48,10 @@ const props = withDefaults(
     operateColumn: () => ({}),
   },
 )
+
+const emits = defineEmits<{
+  (e: 'sorterChange', dataIndex: string, direction: string): void
+}>()
 
 const slots = useSlots()
 const hasTableOperateSlot = computed(() => !!slots['table-operate'])
