@@ -45,13 +45,25 @@
 
     <a-card>
       <a-space size="medium" direction="vertical" fill>
-        <template v-if="$slots['actions']">
+        <template v-if="$slots['actions'] || selectedKeys.length">
           <a-space align="center" fill>
             <slot name="actions" :add-row="addRow" />
+
+            <a-button
+              v-if="selectedKeys.length"
+              type="primary"
+              status="danger"
+              @click="() => onDelete()">
+              <template #icon>
+                <icon-delete />
+              </template>
+              批量删除
+            </a-button>
           </a-space>
         </template>
 
         <ListPageTable
+          v-model:selected-ids="selectedKeys"
           :columns="tableColumns"
           :data="listData"
           :loading="loading"
@@ -174,6 +186,7 @@ const total = ref(0)
 const listData = shallowRef<T[]>([])
 const loading = ref(false)
 const sortState = ref<PaginationParams['sort']>([])
+const selectedKeys = ref<(string | number)[]>([])
 
 const onSorterChange = (dataIndex: string, direction: string) => {
   if (!direction) {
@@ -208,6 +221,7 @@ const fetchList = async () => {
     if (res) {
       listData.value = res.list
       total.value = res.total
+      selectedKeys.value = []
     }
   } catch (error) {
     Message.error(getErrorMsg(error))
@@ -280,14 +294,17 @@ const addRow = () => {
   modalFormValue.value = { ...(props.createFormInitData as C) }
 }
 
-const onDelete = (row: T) => {
+const onDelete = (row?: T) => {
+  const ids = row ? [row.id] : (selectedKeys.value as number[])
+  if (!ids.length) return
+
   Modal.warning({
     title: `删除${props.entityName}`,
-    content: `确定要删除该${props.entityName}吗？`,
+    content: `确定要删除${row ? '该' : '选中的'}${props.entityName}吗？`,
     hideCancel: false,
     onBeforeOk: async () => {
       try {
-        await props.deleteMethod?.({ ids: [row.id] })
+        await props.deleteMethod?.({ ids })
         Message.success('删除成功')
         fetchList()
         return true

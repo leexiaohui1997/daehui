@@ -1,5 +1,6 @@
 <template>
   <a-table
+    v-model:selected-keys="selectedKeys"
     :columns="extraColumns"
     :data="data"
     :loading="loading"
@@ -7,9 +8,18 @@
     :column-resizable="false"
     :row-key="'id'"
     :scroll="{ x: 2000 }"
+    :row-selection="{
+      type: 'checkbox',
+      showCheckedAll: true,
+      onlyCurrent: false,
+    }"
     @sorter-change="
       (dataIndex, direction) => emits('sorterChange', dataIndex, direction)
     ">
+    <template #index="{ rowIndex }">
+      {{ rowIndex + 1 }}
+    </template>
+
     <template
       v-for="column in columns"
       :key="column.dataIndex"
@@ -29,6 +39,7 @@
 </template>
 
 <script setup lang="ts" generic="T extends ListPageData">
+import { TableColumnData } from '@arco-design/web-vue'
 import { omit } from 'lodash-es'
 import { computed, useSlots } from 'vue'
 
@@ -36,12 +47,14 @@ import { type Column, FORMATTER_MAP, ListPageData } from '@/utils/list-module'
 
 const props = withDefaults(
   defineProps<{
+    selectedIds?: (string | number)[]
     data?: T[]
     columns?: Column<T>[]
     loading?: boolean
     operateColumn?: Partial<Column<T>>
   }>(),
   {
+    selectedIds: () => [],
     data: () => [],
     columns: () => [],
     operateColumn: () => ({}),
@@ -50,15 +63,31 @@ const props = withDefaults(
 
 const emits = defineEmits<{
   (e: 'sorterChange', dataIndex: string, direction: string): void
+  (e: 'update:selectedIds', value: (string | number)[]): void
 }>()
+
+const selectedKeys = computed({
+  get: () => props.selectedIds,
+  set: val => emits('update:selectedIds', val),
+})
 
 const slots = useSlots()
 const hasTableOperateSlot = computed(() => !!slots['table-operate'])
 
 const extraColumns = computed(() => {
-  const columns = props.columns.map(column => {
+  const columns: TableColumnData[] = [
+    {
+      title: '序号',
+      dataIndex: 'index',
+      slotName: 'index',
+      width: 68,
+      fixed: 'left',
+    },
+  ]
+
+  props.columns.forEach(column => {
     const tooltip = column.tooltip ?? true
-    return {
+    columns.push({
       ...omit(column, 'formatType', 'tooltip'),
       slotName: column.dataIndex,
       ellipsis: column.ellipsis ?? true,
@@ -68,11 +97,11 @@ const extraColumns = computed(() => {
               position: 'br',
             }
           : column.tooltip,
-    }
+    })
   })
 
   if (hasTableOperateSlot.value) {
-    ;(columns as unknown[]).push({
+    columns.push({
       title: '操作',
       fixed: 'right',
       slotName: 'table-operate',
