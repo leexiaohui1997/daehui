@@ -13,7 +13,13 @@
           <a-row :gutter="[24, 24]">
             <template v-for="item in computedFilterFields" :key="item.field">
               <a-col :span="24 / filterColumn">
-                <a-form-item :field="item.field" :label="item.title" show-colon>
+                <a-form-item
+                  :field="item.field"
+                  :label="item.title"
+                  :disabled="
+                    EMPTY_VALUE_OPERATES.includes(filterOperates[item.field])
+                  "
+                  show-colon>
                   <div class="filter-form-item">
                     <div class="filter-form-content">
                       <slot :name="`f-${item.field}`" :model="filterValues" />
@@ -87,6 +93,7 @@
 <script lang="ts">
 import { FieldRule, Message, TableData } from '@arco-design/web-vue'
 import {
+  EMPTY_VALUE_OPERATES,
   getErrorMsg,
   OperateEnum,
   type PaginationParams,
@@ -306,19 +313,22 @@ const filterOperates = ref(
 const condition = computed(() => {
   return Object.entries(filterValues.value)
     .map(([key, val]) => {
-      if (
+      const isEmptyValue =
         val === '' ||
         val === undefined ||
         val === null ||
         (Array.isArray(val) && val.length === 0)
-      ) {
+
+      const opStr = filterOperates.value[key] || OperateEnum.Equal
+      const isEmptyValueOperate = EMPTY_VALUE_OPERATES.includes(opStr)
+
+      if (isEmptyValue && !isEmptyValueOperate) {
         return null
       }
 
       const valStr = Array.isArray(val) ? val.join('|') : val
-      const opStr = filterOperates.value[key]
 
-      return `${key}=${opStr && opStr !== OperateEnum.Equal ? `[${opStr}]` : ''}${valStr}`
+      return `${key}=${opStr && opStr !== OperateEnum.Equal ? `[${opStr}]` : ''}${isEmptyValueOperate ? '' : valStr}`
     })
     .filter(Boolean)
     .join('&')
@@ -329,6 +339,12 @@ const handleSearch = () => {
 }
 const handleReset = () => {
   filterValues.value = Object.assign({}, (props.filterFormValues || {}) as F)
+  filterOperates.value = Object.assign(
+    {},
+    Object.fromEntries(
+      computedFilterFields.value.map(item => [item.field, item.operate]),
+    ) as Record<keyof T & string, OperateEnum>,
+  )
   handleSearch()
 }
 </script>

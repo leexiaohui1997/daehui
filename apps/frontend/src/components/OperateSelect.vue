@@ -1,6 +1,7 @@
 <template>
   <a-dropdown
     trigger="hover"
+    position="br"
     :popup-max-height="false"
     @select="emits('update:modelValue', $event as OperateEnum)">
     <div class="operate-select">

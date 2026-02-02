@@ -36,3 +36,8 @@ export const OPERATE_LABEL_MAP: Record<OperateEnum, string> = {
   [OperateEnum.Exist]: '为空',
   [OperateEnum.NotExist]: '非空',
 }
+
+export const EMPTY_VALUE_OPERATES: OperateEnum[] = [
+  OperateEnum.Exist,
+  OperateEnum.NotExist,
+]
