@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { PermissionModule } from './modules/permission/permission.module'
+import { PermissionMenuModule } from './modules/permission-menu/permission-menu.module'
 import { RedisModule } from './modules/redis/redis.module'
 import { UserModule } from './modules/user/user.module'
 import { SharedModule } from './shared/shared.module'
@@ -30,6 +31,7 @@ import { SharedModule } from './shared/shared.module'
     RedisModule,
     UserModule,
     PermissionModule,
+    PermissionMenuModule,
   ],
   controllers: [AppController],
   providers: [AppService],
