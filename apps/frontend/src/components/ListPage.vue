@@ -6,7 +6,10 @@
 
     <template v-if="filterFields?.length">
       <a-card class="filter-form">
-        <a-form :model="filterValues">
+        <a-form
+          :model="filterValues"
+          :label-col-props="{ flex: '100px' }"
+          :wrapper-col-props="{ flex: '1' }">
           <a-row :gutter="[24, 24]">
             <template v-for="item in computedFilterFields" :key="item.field">
               <a-col :span="24 / filterColumn">
