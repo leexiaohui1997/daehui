@@ -34,7 +34,9 @@
 
             <a-col class="filter-form-actions">
               <a-button @click="handleReset">重置</a-button>
-              <a-button type="primary" @click="handleSearch">搜索</a-button>
+              <a-button type="primary" :loading="loading" @click="handleSearch"
+                >搜索</a-button
+              >
             </a-col>
           </a-row>
         </a-form>
@@ -60,6 +62,7 @@
             <slot
               name="table-operate"
               :on-edit="() => editRow(scope.row)"
+              :on-delete="() => onDelete(scope.row)"
               v-bind="scope" />
           </template>
         </ListPageTable>
@@ -91,7 +94,7 @@
 </template>
 
 <script lang="ts">
-import { FieldRule, Message, TableData } from '@arco-design/web-vue'
+import { FieldRule, Message, Modal } from '@arco-design/web-vue'
 import {
   EMPTY_VALUE_OPERATES,
   getErrorMsg,
@@ -108,6 +111,7 @@ import type {
   FilterField,
   FilterFormValues,
   FilterObjField,
+  ListPageData,
 } from '@/utils/list-module'
 
 import ListPageTable from './ListPageTable.vue'
@@ -128,7 +132,7 @@ const MODAL_TYPE_LABEL_MAP: Record<ModalType, string> = {
   setup
   lang="ts"
   generic="
-    T extends TableData,
+    T extends ListPageData,
     C extends Partial<T>,
     F extends FilterFormValues<T>
   ">
@@ -146,6 +150,7 @@ const props = withDefaults(
     listMethod?: (params: PaginationParams) => Promise<PaginationResponse<T>>
     createMethod?: (data: C) => Promise<unknown>
     updateMethod?: (data: C, row: T) => Promise<unknown>
+    deleteMethod?: (params: { ids: number[] }) => Promise<unknown>
   }>(),
   {
     title: '',
@@ -159,6 +164,7 @@ const props = withDefaults(
     listMethod: undefined,
     createMethod: undefined,
     updateMethod: undefined,
+    deleteMethod: undefined,
   },
 )
 
@@ -272,6 +278,25 @@ const addRow = () => {
   modalType.value = ModalType.Create
   editingRow.value = undefined
   modalFormValue.value = { ...(props.createFormInitData as C) }
+}
+
+const onDelete = (row: T) => {
+  Modal.warning({
+    title: `删除${props.entityName}`,
+    content: `确定要删除该${props.entityName}吗？`,
+    hideCancel: false,
+    onBeforeOk: async () => {
+      try {
+        await props.deleteMethod?.({ ids: [row.id] })
+        Message.success('删除成功')
+        fetchList()
+        return true
+      } catch (error) {
+        Message.error(getErrorMsg(error))
+        return false
+      }
+    },
+  })
 }
 
 const computedFilterFields = computed(() => {

@@ -28,12 +28,11 @@
   </a-table>
 </template>
 
-<script setup lang="ts" generic="T extends TableData">
-import { TableData } from '@arco-design/web-vue'
+<script setup lang="ts" generic="T extends ListPageData">
 import { omit } from 'lodash-es'
 import { computed, useSlots } from 'vue'
 
-import { type Column, FORMATTER_MAP } from '@/utils/list-module'
+import { type Column, FORMATTER_MAP, ListPageData } from '@/utils/list-module'
 
 const props = withDefaults(
   defineProps<{

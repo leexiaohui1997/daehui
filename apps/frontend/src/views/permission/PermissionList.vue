@@ -9,6 +9,7 @@ import { ColumnFormatType } from '@/utils/list-module'
 <template>
   <ListPage
     entity-name="权限"
+    :delete-method="permissionApi.delete"
     :update-method="permissionApi.update"
     :create-method="permissionApi.create"
     :list-method="permissionApi.list"
@@ -99,7 +100,7 @@ import { ColumnFormatType } from '@/utils/list-module'
       name: { required: true, message: '请输入权限标识' },
       title: { required: true, message: '请输入权限名称' },
     }">
-    <template #table-operate="{ onEdit }">
+    <template #table-operate="{ onEdit, onDelete }">
       <a-link @click="onEdit">
         <template #icon>
           <icon-edit />
@@ -107,7 +108,7 @@ import { ColumnFormatType } from '@/utils/list-module'
         编辑
       </a-link>
 
-      <a-link status="danger">
+      <a-link status="danger" @click="onDelete">
         <template #icon>
           <icon-delete />
         </template>

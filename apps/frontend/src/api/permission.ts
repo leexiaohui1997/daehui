@@ -27,6 +27,11 @@ class PermissionApi {
     Pick<PermissionEntity, 'name' | 'title' | 'description'>,
     void
   >('put', '/permissions')
+
+  delete = requestUtils.defineFunc<{ ids: number[] }, void>(
+    'post',
+    '/permissions/delete',
+  )
 }
 
 export const permissionApi = new PermissionApi()

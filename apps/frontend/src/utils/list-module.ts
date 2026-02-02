@@ -9,6 +9,8 @@ export enum ColumnFormatType {
 
 export type FormatFunc = (value: unknown) => string
 
+export type ListPageData = TableData & { id: number }
+
 export type Column<T> = TableColumnData & {
   // 表格属性
   dataIndex: keyof T & string

@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
   Patch,
@@ -68,7 +67,7 @@ export class PermissionController {
    * 删除权限
    */
   @UseGuards(AuthGuard, AdminGuard)
-  @Delete()
+  @Post('delete')
   async delete(@Body() dto: DeletePermissionDto): Promise<void> {
     return this.permissionService.delete(dto)
   }
