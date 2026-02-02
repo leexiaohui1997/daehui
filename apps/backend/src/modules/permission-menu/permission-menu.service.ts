@@ -44,7 +44,9 @@ export class PermissionMenuService {
   async findList(
     dto: PermissionMenuQueryDto,
   ): Promise<{ list: PermissionMenu[]; total: number }> {
-    return this.permissionMenuRepository.findListByDto(dto)
+    return this.permissionMenuRepository.findListByDto(dto, {
+      relations: ['permissions'],
+    })
   }
 
   /**

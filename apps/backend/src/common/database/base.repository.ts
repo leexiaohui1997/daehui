@@ -1,5 +1,11 @@
 import { Injectable } from '@nestjs/common'
-import { EntityManager, EntityTarget, ObjectLiteral, Repository } from 'typeorm'
+import {
+  EntityManager,
+  EntityTarget,
+  FindManyOptions,
+  ObjectLiteral,
+  Repository,
+} from 'typeorm'
 
 import { PaginationDto } from '../dto/pagination.dto'
 import { ConditionUtils } from '../utils/condition.util'
@@ -14,7 +20,7 @@ export class BaseRepository<T extends ObjectLiteral> extends Repository<T> {
    * 根据 DTO 分页和排序参数获取列表
    * @param dto 分页 DTO
    */
-  async findListByDto(dto: PaginationDto) {
+  async findListByDto(dto: PaginationDto, options?: FindManyOptions<T>) {
     const { page = 1, pageSize = 10, sort = [], conditions = [] } = dto
     const skip = (page - 1) * pageSize
     const [list, total] = await this.findAndCount({
@@ -27,6 +33,7 @@ export class BaseRepository<T extends ObjectLiteral> extends Repository<T> {
       }, {}),
       skip,
       take: pageSize,
+      ...options,
     })
     return { list, total }
   }
