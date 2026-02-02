@@ -1,5 +1,11 @@
 <template>
   <div class="list-page">
+    <template v-if="$slots['actions']">
+      <a-space align="center" full>
+        <slot name="actions" :add-row="addRow" />
+      </a-space>
+    </template>
+
     <ListPageTable
       :columns="tableColumns"
       :data="listData"
@@ -163,6 +169,12 @@ const editRow = (row: T) => {
   modalType.value = ModalType.Update
   editingRow.value = row
   modalFormValue.value = { ...pick(row, ...Object.keys(modalFormValue.value)) }
+}
+
+const addRow = () => {
+  modalType.value = ModalType.Create
+  editingRow.value = undefined
+  modalFormValue.value = { ...(props.createFormInitData as C) }
 }
 </script>
 

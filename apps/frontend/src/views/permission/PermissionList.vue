@@ -8,6 +8,7 @@ import { ColumnFormatType } from '@/utils/list-module'
   <ListPage
     entity-name="权限"
     :update-method="permissionApi.update"
+    :create-method="permissionApi.create"
     :list-method="permissionApi.list"
     :table-columns="[
       {
@@ -84,6 +85,15 @@ import { ColumnFormatType } from '@/utils/list-module'
       <a-form-item field="description" label="权限描述">
         <a-input v-model="formValue.description" />
       </a-form-item>
+    </template>
+
+    <template #actions="{ addRow }">
+      <a-button type="primary" @click="addRow">
+        <template #icon>
+          <icon-plus />
+        </template>
+        创建权限
+      </a-button>
     </template>
   </ListPage>
 </template>

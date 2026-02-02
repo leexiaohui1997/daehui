@@ -22,6 +22,11 @@ class PermissionApi {
     void,
     { id: number }
   >('patch', ({ id }) => `/permissions/${id}`)
+
+  create = requestUtils.defineFunc<
+    Pick<PermissionEntity, 'name' | 'title' | 'description'>,
+    void
+  >('put', '/permissions')
 }
 
 export const permissionApi = new PermissionApi()
