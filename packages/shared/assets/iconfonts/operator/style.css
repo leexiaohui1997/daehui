@@ -1,0 +1,83 @@
+@font-face {
+  font-family: 'icomoon-operator';
+  src: url('./fonts/icomoon.eot?gynqxo');
+  src:
+    url('./fonts/icomoon.eot?gynqxo#iefix') format('embedded-opentype'),
+    url('./fonts/icomoon.ttf?gynqxo') format('truetype'),
+    url('./fonts/icomoon.woff?gynqxo') format('woff'),
+    url('./fonts/icomoon.svg?gynqxo#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^='icon-'],
+[class*=' icon-'] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon-operator' !important;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-operator_contain:before {
+  content: '\e900';
+}
+.icon-operator_endwith .path1:before {
+  content: '\e901';
+  color: var(--color-text-4, rgb(153, 153, 153));
+}
+.icon-operator_endwith .path2:before {
+  content: '\e902';
+  margin-left: -1em;
+}
+.icon-operator_endwith .path3:before {
+  content: '\e903';
+  margin-left: -1em;
+  color: var(--color-bg-white, rgb(255, 255, 255));
+}
+.icon-operator_equal:before {
+  content: '\e904';
+}
+.icon-operator_exclude:before {
+  content: '\e905';
+}
+.icon-operator_is_empty:before {
+  content: '\e906';
+}
+.icon-operator_like:before {
+  content: '\e907';
+}
+.icon-operator_not_empty:before {
+  content: '\e908';
+}
+.icon-operator_notequal:before {
+  content: '\e909';
+}
+.icon-operator_range:before {
+  content: '\e90a';
+}
+.icon-operator_startwith .path1:before {
+  content: '\e90b';
+  color: var(--color-text-4, rgb(153, 153, 153));
+}
+.icon-operator_startwith .path2:before {
+  content: '\e90c';
+  margin-left: -1em;
+  color: var(--color-bg-white, rgb(255, 255, 255));
+}
+.icon-operator_startwith .path3:before {
+  content: '\e90d';
+  margin-left: -1em;
+}
+.icon-operator_startwith .path4:before {
+  content: '\e90e';
+  margin-left: -1em;
+  color: var(--color-bg-white, rgb(255, 255, 255));
+}

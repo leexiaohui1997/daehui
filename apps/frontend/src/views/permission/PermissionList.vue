@@ -1,4 +1,6 @@
 <script setup lang="tsx">
+import { OperateEnum } from '@daehui/shared'
+
 import { permissionApi } from '@/api/permission'
 import ListPage from '@/components/ListPage.vue'
 import { ColumnFormatType } from '@/utils/list-module'
@@ -56,6 +58,37 @@ import { ColumnFormatType } from '@/utils/list-module'
         formatType: ColumnFormatType.DateTime,
       },
     ]"
+    :filter-fields="[
+      'id',
+      {
+        field: 'name',
+        operate: OperateEnum.Like,
+      },
+      {
+        field: 'title',
+        operate: OperateEnum.Like,
+      },
+      {
+        field: 'description',
+        operate: OperateEnum.Like,
+      },
+      {
+        field: 'createdAt',
+        operate: OperateEnum.Range,
+      },
+      {
+        field: 'updatedAt',
+        operate: OperateEnum.Range,
+      },
+    ]"
+    :filter-form-values="{
+      id: '',
+      name: '',
+      title: '',
+      description: '',
+      createdAt: [],
+      updatedAt: [],
+    }"
     :table-operate-column="{ width: 180 }"
     :create-form-init-data="{
       name: '',
@@ -103,6 +136,30 @@ import { ColumnFormatType } from '@/utils/list-module'
         </template>
         创建权限
       </a-button>
+    </template>
+
+    <template #f-id="{ model }">
+      <a-input v-model="model.id" />
+    </template>
+
+    <template #f-name="{ model }">
+      <a-input v-model="model.name" />
+    </template>
+
+    <template #f-title="{ model }">
+      <a-input v-model="model.title" />
+    </template>
+
+    <template #f-description="{ model }">
+      <a-input v-model="model.description" />
+    </template>
+
+    <template #f-createdAt="{ model }">
+      <a-range-picker v-model="model.createdAt" />
+    </template>
+
+    <template #f-updatedAt="{ model }">
+      <a-range-picker v-model="model.updatedAt" />
     </template>
   </ListPage>
 </template>

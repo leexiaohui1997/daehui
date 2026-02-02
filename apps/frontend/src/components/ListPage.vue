@@ -1,35 +1,71 @@
 <template>
   <div class="list-page">
-    <template v-if="$slots['actions']">
-      <a-space align="center" full>
-        <slot name="actions" :add-row="addRow" />
-      </a-space>
+    <div v-if="title !== false" class="list-page-title">
+      <span>{{ title || `${entityName}配置` }}</span>
+    </div>
+
+    <template v-if="filterFields?.length">
+      <a-card class="filter-form">
+        <a-form :model="filterValues">
+          <a-row :gutter="[24, 24]">
+            <template v-for="item in computedFilterFields" :key="item.field">
+              <a-col :span="24 / filterColumn">
+                <a-form-item :field="item.field" :label="item.title" show-colon>
+                  <div class="filter-form-item">
+                    <div class="filter-form-content">
+                      <slot :name="`f-${item.field}`" :model="filterValues" />
+                    </div>
+                    <div class="filter-form-operate">
+                      <OperateSelect v-model="filterOperates[item.field]" />
+                    </div>
+                  </div>
+                </a-form-item>
+              </a-col>
+            </template>
+
+            <a-col class="filter-form-actions">
+              <a-button @click="handleReset">重置</a-button>
+              <a-button type="primary" @click="handleSearch">搜索</a-button>
+            </a-col>
+          </a-row>
+        </a-form>
+      </a-card>
     </template>
 
-    <ListPageTable
-      :columns="tableColumns"
-      :data="listData"
-      :loading="loading"
-      :pagination="false"
-      :operate-column="tableOperateColumn"
-      @sorter-change="onSorterChange">
-      <template v-if="$slots['table-operate']" #table-operate="scope">
-        <slot
-          name="table-operate"
-          :on-edit="() => editRow(scope.row)"
-          v-bind="scope" />
-      </template>
-    </ListPageTable>
+    <a-card>
+      <a-space size="medium" direction="vertical" fill>
+        <template v-if="$slots['actions']">
+          <a-space align="center" fill>
+            <slot name="actions" :add-row="addRow" />
+          </a-space>
+        </template>
 
-    <a-space fill direction="vertical" align="end">
-      <a-pagination
-        v-model:page-size="pageSize"
-        v-model:current="page"
-        :total="total"
-        :show-total="true"
-        :show-jumper="true"
-        :show-page-size="true" />
-    </a-space>
+        <ListPageTable
+          :columns="tableColumns"
+          :data="listData"
+          :loading="loading"
+          :pagination="false"
+          :operate-column="tableOperateColumn"
+          @sorter-change="onSorterChange">
+          <template v-if="$slots['table-operate']" #table-operate="scope">
+            <slot
+              name="table-operate"
+              :on-edit="() => editRow(scope.row)"
+              v-bind="scope" />
+          </template>
+        </ListPageTable>
+
+        <a-space fill direction="vertical" align="end">
+          <a-pagination
+            v-model:page-size="pageSize"
+            v-model:current="page"
+            :total="total"
+            :show-total="true"
+            :show-jumper="true"
+            :show-page-size="true" />
+        </a-space>
+      </a-space>
+    </a-card>
   </div>
 
   <a-modal
@@ -49,16 +85,23 @@
 import { FieldRule, Message, TableData } from '@arco-design/web-vue'
 import {
   getErrorMsg,
+  OperateEnum,
   type PaginationParams,
   type PaginationResponse,
   type SortOrderValue,
 } from '@daehui/shared'
 import { pick } from 'lodash-es'
-import { computed, ref, shallowRef, useTemplateRef, watch } from 'vue'
+import { computed, Ref, ref, shallowRef, useTemplateRef, watch } from 'vue'
 
-import type { Column } from '@/utils/list-module'
+import type {
+  Column,
+  FilterField,
+  FilterFormValues,
+  FilterObjField,
+} from '@/utils/list-module'
 
 import ListPageTable from './ListPageTable.vue'
+import OperateSelect from './OperateSelect.vue'
 
 export enum ModalType {
   Create = 1,
@@ -71,17 +114,43 @@ const MODAL_TYPE_LABEL_MAP: Record<ModalType, string> = {
 }
 </script>
 
-<script setup lang="ts" generic="T extends TableData, C extends Partial<T>">
-const props = defineProps<{
-  entityName: string
-  tableColumns?: Column<T>[]
-  tableOperateColumn?: Partial<Column<T>>
-  createFormInitData?: C
-  createFormRules?: Record<string, FieldRule | FieldRule[]>
-  listMethod?: (params: PaginationParams) => Promise<PaginationResponse<T>>
-  createMethod?: (data: C) => Promise<unknown>
-  updateMethod?: (data: C, row: T) => Promise<unknown>
-}>()
+<script
+  setup
+  lang="ts"
+  generic="
+    T extends TableData,
+    C extends Partial<T>,
+    F extends FilterFormValues<T>
+  ">
+const props = withDefaults(
+  defineProps<{
+    title?: string | false
+    entityName: string
+    tableColumns?: Column<T>[]
+    tableOperateColumn?: Partial<Column<T>>
+    createFormInitData?: C
+    createFormRules?: Record<string, FieldRule | FieldRule[]>
+    filterFormValues?: F
+    filterFields?: FilterField<keyof T & string>[]
+    filterColumn?: number
+    listMethod?: (params: PaginationParams) => Promise<PaginationResponse<T>>
+    createMethod?: (data: C) => Promise<unknown>
+    updateMethod?: (data: C, row: T) => Promise<unknown>
+  }>(),
+  {
+    title: '',
+    filterColumn: 3,
+    tableColumns: () => [],
+    tableOperateColumn: () => ({}),
+    createFormInitData: () => ({}) as C,
+    createFormRules: () => ({}),
+    filterFormValues: () => ({}) as F,
+    filterFields: () => [],
+    listMethod: undefined,
+    createMethod: undefined,
+    updateMethod: undefined,
+  },
+)
 
 const page = ref(1)
 const pageSize = ref(10)
@@ -104,10 +173,11 @@ const onSorterChange = (dataIndex: string, direction: string) => {
   ]
 }
 
+const applyCondition = ref('')
 const requestParams = computed<PaginationParams>(() => ({
   page: page.value,
   pageSize: pageSize.value,
-  conditions: [],
+  conditions: [applyCondition.value],
   sort: sortState.value,
 }))
 
@@ -193,13 +263,113 @@ const addRow = () => {
   editingRow.value = undefined
   modalFormValue.value = { ...(props.createFormInitData as C) }
 }
+
+const computedFilterFields = computed(() => {
+  const fields: FilterObjField<keyof T & string>[] = []
+  props.filterFields?.forEach(field => {
+    if (typeof field === 'string') {
+      fields.push({ field })
+    } else {
+      fields.push(field)
+    }
+  })
+
+  return fields.map(field => {
+    const tTitle = props.tableColumns.find(
+      item => item.dataIndex === field.field,
+    )?.title
+    const title =
+      field.title || (typeof tTitle === 'string' ? tTitle : '') || ''
+    return {
+      ...field,
+      title,
+      operate: field.operate || OperateEnum.Equal,
+    }
+  })
+})
+
+const filterValues = ref(
+  Object.assign({}, (props.filterFormValues || {}) as F),
+) as Ref<F>
+
+const filterOperates = ref(
+  Object.fromEntries(
+    computedFilterFields.value.map(item => [item.field, item.operate]),
+  ),
+) as Ref<
+  Record<keyof T & string, OperateEnum>,
+  Record<keyof T & string, OperateEnum>
+>
+const condition = computed(() => {
+  return Object.entries(filterValues.value)
+    .map(([key, val]) => {
+      if (
+        val === '' ||
+        val === undefined ||
+        val === null ||
+        (Array.isArray(val) && val.length === 0)
+      ) {
+        return null
+      }
+
+      const valStr = Array.isArray(val) ? val.join('|') : val
+      const opStr = filterOperates.value[key]
+
+      return `${key}=${opStr && opStr !== OperateEnum.Equal ? `[${opStr}]` : ''}${valStr}`
+    })
+    .filter(Boolean)
+    .join('&')
+})
+
+const handleSearch = () => {
+  applyCondition.value = condition.value
+}
+const handleReset = () => {
+  filterValues.value = Object.assign({}, (props.filterFormValues || {}) as F)
+  handleSearch()
+}
 </script>
 
 <style lang="less" scoped>
 .list-page {
-  gap: @size-4;
+  gap: @size-6;
   padding: @size-6;
   display: flex;
   flex-direction: column;
+
+  .list-page-title {
+    font-size: @font-size-title-2;
+    font-weight: 500;
+    color: @color-text-1;
+  }
+}
+
+.filter-form {
+  &-item {
+    flex: 1;
+    gap: @size-4;
+    display: flex;
+  }
+  &-content {
+    flex: 1;
+
+    & > * {
+      width: 100%;
+    }
+  }
+  &-operate {
+    display: flex;
+    align-items: center;
+  }
+  &-actions {
+    flex: 1;
+    gap: @size-4;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  :deep(.arco-form-item) {
+    margin: 0;
+  }
 }
 </style>

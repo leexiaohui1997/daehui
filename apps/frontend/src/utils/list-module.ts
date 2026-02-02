@@ -1,4 +1,5 @@
-import { TableColumnData } from '@arco-design/web-vue'
+import { TableColumnData, TableData } from '@arco-design/web-vue'
+import { OperateEnum } from '@daehui/shared'
 import dayjs from 'dayjs'
 
 export enum ColumnFormatType {
@@ -34,3 +35,15 @@ export const FORMATTER_MAP: Record<ColumnFormatType, FormatFunc> = {
     return '无效日期时间'
   },
 }
+
+export type FilterFormValues<T extends TableData> = {
+  [K in keyof T]?: unknown
+}
+
+export type FilterObjField<K extends string> = {
+  field: K
+  title?: string
+  operate?: OperateEnum
+  supportOperates?: OperateEnum[]
+}
+export type FilterField<K extends string> = K | FilterObjField<K>

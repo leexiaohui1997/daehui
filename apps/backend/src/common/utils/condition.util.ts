@@ -1,31 +1,13 @@
-import { ApiCode, ApiError } from '@daehui/shared'
+import { ApiCode, ApiError, OperateEnum } from '@daehui/shared'
 import {
   Between,
   FindOptionsWhere,
   In,
   IsNull,
-  LessThan,
-  LessThanOrEqual,
   Like,
-  MoreThan,
-  MoreThanOrEqual,
   Not,
   ObjectLiteral,
 } from 'typeorm'
-
-export enum OperateEnum {
-  Equal = 'EQ',
-  NotEqual = 'NOT',
-  GreaterThan = 'GT',
-  GreaterThanOrEqual = 'GTE',
-  LessThan = 'LT',
-  LessThanOrEqual = 'LTE',
-  Like = 'LIKE',
-  In = 'IN',
-  NotIn = 'NIN',
-  Range = 'RANGE',
-  Exist = 'EXIST',
-}
 
 export type OperateFunc = (...values: string[]) => unknown
 
@@ -34,15 +16,14 @@ export const OperateMap: Record<OperateEnum, OperateFunc> = {
     values.length > 1 ? In(values) : values[0],
   [OperateEnum.NotEqual]: (...values: string[]) =>
     values.length > 1 ? Not(In(values)) : Not(values[0]),
-  [OperateEnum.GreaterThan]: (value: string) => MoreThan(value),
-  [OperateEnum.GreaterThanOrEqual]: (value: string) => MoreThanOrEqual(value),
-  [OperateEnum.LessThan]: (value: string) => LessThan(value),
-  [OperateEnum.LessThanOrEqual]: (value: string) => LessThanOrEqual(value),
   [OperateEnum.Like]: (value: string) => Like(`%${value}%`),
+  [OperateEnum.LikeLeft]: (value: string) => Like(`${value}%`),
+  [OperateEnum.LikeRight]: (value: string) => Like(`%${value}`),
   [OperateEnum.In]: (...values: string[]) => In(values),
   [OperateEnum.NotIn]: (...values: string[]) => Not(In(values)),
   [OperateEnum.Range]: (from: string, to: string) => Between(from, to),
   [OperateEnum.Exist]: () => Not(IsNull()),
+  [OperateEnum.NotExist]: () => IsNull(),
 }
 
 /**
