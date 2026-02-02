@@ -20,6 +20,14 @@ export const routes: RouteRecordRaw[] = [
           belongMenu: 'auth-config',
         },
       },
+      {
+        path: 'permission-menu',
+        name: 'PermissionMenuList',
+        component: () => import('@/views/permission/PermissionMenuList.vue'),
+        meta: {
+          belongMenu: 'menu-config',
+        },
+      },
     ],
   },
   {
