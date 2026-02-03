@@ -20,8 +20,8 @@ export const OPERATE_ICON_MAP: Record<OperateEnum, string> = {
   [OperateEnum.In]: 'icon-operator_contain',
   [OperateEnum.NotIn]: 'icon-operator_exclude',
   [OperateEnum.Range]: 'icon-operator_range',
-  [OperateEnum.Exist]: 'icon-operator_is_empty',
-  [OperateEnum.NotExist]: 'icon-operator_not_empty',
+  [OperateEnum.NotExist]: 'icon-operator_is_empty',
+  [OperateEnum.Exist]: 'icon-operator_not_empty',
 }
 
 export const OPERATE_LABEL_MAP: Record<OperateEnum, string> = {
@@ -33,8 +33,8 @@ export const OPERATE_LABEL_MAP: Record<OperateEnum, string> = {
   [OperateEnum.In]: '包含',
   [OperateEnum.NotIn]: '不包含',
   [OperateEnum.Range]: '范围',
-  [OperateEnum.Exist]: '为空',
-  [OperateEnum.NotExist]: '非空',
+  [OperateEnum.NotExist]: '为空',
+  [OperateEnum.Exist]: '非空',
 }
 
 export const EMPTY_VALUE_OPERATES: OperateEnum[] = [

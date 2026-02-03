@@ -6,13 +6,16 @@ import {
   parseCondition,
 } from '@daehui/shared'
 import {
+  And,
   Between,
+  Equal,
   FindOptionsWhere,
   In,
   IsNull,
   Like,
   Not,
   ObjectLiteral,
+  Or,
 } from 'typeorm'
 
 export type OperateFunc = (...values: string[]) => unknown
@@ -28,8 +31,8 @@ export const OperateMap: Record<OperateEnum, OperateFunc> = {
   [OperateEnum.In]: (...values: string[]) => In(values),
   [OperateEnum.NotIn]: (...values: string[]) => Not(In(values)),
   [OperateEnum.Range]: (from: string, to: string) => Between(from, to),
-  [OperateEnum.Exist]: () => Not(IsNull()),
-  [OperateEnum.NotExist]: () => IsNull(),
+  [OperateEnum.Exist]: () => And(Not(IsNull()), Not('')),
+  [OperateEnum.NotExist]: () => Or(IsNull(), Equal('')),
 }
 
 /**
