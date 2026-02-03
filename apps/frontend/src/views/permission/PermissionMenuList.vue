@@ -74,12 +74,19 @@ import { ColumnFormatType } from '@/utils/list-module'
         field: 'description',
         operate: OperateEnum.Like,
       },
+      {
+        field: 'permissions',
+        operate: OperateEnum.In,
+        title: '菜单权限',
+        supportOperates: [OperateEnum.In],
+      },
     ]"
     :filter-form-values="{
       id: '',
       name: '',
       title: '',
       description: '',
+      permissions: [],
     }"
     :table-operate-column="{ width: 180 }"
     :create-form-init-data="{
@@ -162,6 +169,23 @@ import { ColumnFormatType } from '@/utils/list-module'
 
     <template #f-description="{ model }">
       <a-input v-model="model.description" />
+    </template>
+
+    <template #f-permissions="{ model }">
+      <EntitySelect
+        v-model="model.permissions"
+        :api="permissionApi.list"
+        label-key="title"
+        multiple>
+        <template #option="{ item }">
+          <span>
+            <b>
+              <i>{{ item.name }}</i>
+            </b>
+            {{ item.title }}
+          </span>
+        </template>
+      </EntitySelect>
     </template>
   </ListPage>
 </template>

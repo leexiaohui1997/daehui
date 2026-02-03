@@ -25,7 +25,9 @@
                       <slot :name="`f-${item.field}`" :model="filterValues" />
                     </div>
                     <div class="filter-form-operate">
-                      <OperateSelect v-model="filterOperates[item.field]" />
+                      <OperateSelect
+                        v-model="filterOperates[item.field]"
+                        :operate-list="item.supportOperates" />
                     </div>
                   </div>
                 </a-form-item>
@@ -377,7 +379,9 @@ const condition = computed(() => {
 })
 
 const handleSearch = () => {
+  page.value = 1
   applyCondition.value = condition.value
+  fetchList()
 }
 const handleReset = () => {
   filterValues.value = Object.assign({}, (props.filterFormValues || {}) as F)
