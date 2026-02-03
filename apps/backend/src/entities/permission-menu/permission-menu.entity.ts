@@ -41,9 +41,4 @@ export class PermissionMenu extends BaseEntity {
   get permissionIds() {
     return this.permissions?.map(item => item.id)
   }
-
-  @Expose()
-  get debug() {
-    return 'DEBUG'
-  }
 }

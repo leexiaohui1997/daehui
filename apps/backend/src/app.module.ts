@@ -7,6 +7,7 @@ import { AppService } from './app.service'
 import { PermissionModule } from './modules/permission/permission.module'
 import { PermissionMenuModule } from './modules/permission-menu/permission-menu.module'
 import { RedisModule } from './modules/redis/redis.module'
+import { RoleModule } from './modules/role/role.module'
 import { UserModule } from './modules/user/user.module'
 import { SharedModule } from './shared/shared.module'
 
@@ -32,6 +33,7 @@ import { SharedModule } from './shared/shared.module'
     UserModule,
     PermissionModule,
     PermissionMenuModule,
+    RoleModule,
   ],
   controllers: [AppController],
   providers: [AppService],
