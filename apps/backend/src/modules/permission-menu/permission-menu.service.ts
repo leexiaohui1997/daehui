@@ -4,7 +4,6 @@ import { In } from 'typeorm'
 
 import { BaseRepository } from '../../common/database/base.repository'
 import { InjectBaseRepository } from '../../common/database/base-repository.decorator'
-import { ConditionUtils } from '../../common/utils/condition.util'
 import { Permission } from '../../entities/permission/permission.entity'
 import { PermissionMenu } from '../../entities/permission-menu/permission-menu.entity'
 import { BatchDeletePermissionMenuDto } from './dto/batch-delete-permission-menu.dto'
@@ -45,37 +44,6 @@ export class PermissionMenuService {
   async findList(
     dto: PermissionMenuQueryDto,
   ): Promise<{ list: PermissionMenu[]; total: number }> {
-    const { conditions } = dto
-
-    // 处理 permissions 关联查询
-    const newConditions = await ConditionUtils.transformCondition(
-      conditions,
-      'permissions',
-      async (values, idConditions) => {
-        const qb = this.permissionMenuRepository.createQueryBuilder('menu')
-
-        // 关联查询
-        qb.innerJoin('menu.permissions', 'permission')
-          .where('permission.id IN (:...pIds)', { pIds: values })
-          .select(['menu.id'])
-
-        // 如果有 ID 查询条件，需要同时满足
-        if (idConditions.length > 0) {
-          const where = ConditionUtils.parse(idConditions)
-          qb.andWhere(where)
-        }
-
-        const menus = await qb.getMany()
-        return menus.map(item => item.id)
-      },
-    )
-
-    if (newConditions === false) {
-      return { list: [], total: 0 }
-    }
-
-    dto.conditions = newConditions
-
     return this.permissionMenuRepository.findListByDto(dto, {
       relations: ['permissions'],
     })

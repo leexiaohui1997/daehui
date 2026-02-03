@@ -41,3 +41,48 @@ export const EMPTY_VALUE_OPERATES: OperateEnum[] = [
   OperateEnum.Exist,
   OperateEnum.NotExist,
 ]
+
+export type ConditionParsedResult = {
+  field: string
+  operate: OperateEnum
+  values: string[]
+}
+
+/**
+ * 解析条件字符串为条件解析结果数组
+ * @param condition 条件字符串，例如："field=[EQ]value1|value2&field2=[LIKE]value3"
+ * @returns 条件解析结果数组
+ */
+export function parseCondition(condition: string): ConditionParsedResult[] {
+  const conditionParts = condition.split('&').filter(Boolean)
+  return conditionParts
+    .map(part => {
+      const [field, ...valueStrs] = part.split('=')
+      const valueStr = valueStrs.join('=')
+      if (!valueStr) return
+      const [, , op = OperateEnum.Equal, value = ''] =
+        valueStr.match(/^(\[([^[\]]+)\])?([^[\]]*)$/) || []
+
+      const values = value.split('|')
+
+      return {
+        field,
+        operate: op as OperateEnum,
+        values,
+      }
+    })
+    .filter(Boolean) as ConditionParsedResult[]
+}
+
+/**
+ * 将条件解析结果数组拼接为条件字符串
+ * @param parts 条件解析结果数组
+ * @returns 条件字符串
+ */
+export function joinCondition(parts: ConditionParsedResult[]) {
+  return parts
+    .map(({ field, operate, values }) => {
+      return `${field}=[${operate}]${values.join('|')}`
+    })
+    .join('&')
+}
