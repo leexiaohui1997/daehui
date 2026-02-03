@@ -42,6 +42,11 @@ import { ColumnFormatType } from '@/utils/list-module'
         width: 200,
       },
       {
+        dataIndex: 'permissions',
+        title: '菜单权限',
+        width: 200,
+      },
+      {
         dataIndex: 'createdAt',
         title: '创建时间',
         width: 180,
@@ -77,8 +82,15 @@ import { ColumnFormatType } from '@/utils/list-module'
       {
         field: 'permissions',
         operate: OperateEnum.In,
-        title: '菜单权限',
         supportOperates: [OperateEnum.In],
+      },
+      {
+        field: 'createdAt',
+        operate: OperateEnum.Range,
+      },
+      {
+        field: 'updatedAt',
+        operate: OperateEnum.Range,
       },
     ]"
     :filter-form-values="{
@@ -87,6 +99,8 @@ import { ColumnFormatType } from '@/utils/list-module'
       title: '',
       description: '',
       permissions: [],
+      createdAt: [],
+      updatedAt: [],
     }"
     :table-operate-column="{ width: 180 }"
     :create-form-init-data="{
@@ -186,6 +200,26 @@ import { ColumnFormatType } from '@/utils/list-module'
           </span>
         </template>
       </EntitySelect>
+    </template>
+
+    <template #f-createdAt="{ model }">
+      <a-range-picker v-model="model.createdAt" />
+    </template>
+
+    <template #f-updatedAt="{ model }">
+      <a-range-picker v-model="model.updatedAt" />
+    </template>
+
+    <template #d-permissions="{ row }">
+      <a-space wrap>
+        <template v-for="item in row.permissions" :key="item.id">
+          <a-tooltip v-if="item.description" :content="item.description">
+            <a-tag>{{ item.title }}</a-tag>
+          </a-tooltip>
+
+          <a-tag v-else>{{ item.title }}</a-tag>
+        </template>
+      </a-space>
     </template>
   </ListPage>
 </template>

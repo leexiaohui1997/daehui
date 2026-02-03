@@ -24,7 +24,12 @@
       v-for="column in columns"
       :key="column.dataIndex"
       #[column.dataIndex]="{ rowIndex }">
-      <span>{{ formatColumnValue(column, rowIndex) || '-' }}</span>
+      <slot
+        :name="`d-${column.dataIndex}`"
+        :row-index="rowIndex"
+        :row="data[rowIndex]!">
+        <span>{{ formatColumnValue(column, rowIndex) || '-' }}</span>
+      </slot>
     </template>
 
     <template #table-operate="{ rowIndex }">

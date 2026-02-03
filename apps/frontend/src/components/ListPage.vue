@@ -79,6 +79,15 @@
               :on-delete="() => onDelete(scope.row)"
               v-bind="scope" />
           </template>
+
+          <template
+            v-for="item in tableColumns"
+            :key="item.dataIndex"
+            #[`d-${item.dataIndex}`]="scope">
+            <slot
+              :name="`d-${item.dataIndex}`"
+              v-bind="scope as { row: T; rowIndex: number }" />
+          </template>
         </ListPageTable>
 
         <a-space fill direction="vertical" align="end">
