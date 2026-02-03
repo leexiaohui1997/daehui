@@ -1,3 +1,4 @@
+import { Expose } from 'class-transformer'
 import { Column, Entity, JoinTable, ManyToMany } from 'typeorm'
 
 import { BaseEntity } from '../base.entity'
@@ -35,4 +36,14 @@ export class PermissionMenu extends BaseEntity {
     },
   })
   permissions: Permission[]
+
+  @Expose()
+  get permissionIds() {
+    return this.permissions?.map(item => item.id)
+  }
+
+  @Expose()
+  get debug() {
+    return 'DEBUG'
+  }
 }

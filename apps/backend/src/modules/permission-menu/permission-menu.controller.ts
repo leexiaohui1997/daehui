@@ -1,5 +1,6 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Get,
   Param,
@@ -7,6 +8,7 @@ import {
   Post,
   Put,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common'
 
 import { AdminGuard } from '../../common/guards/admin.guard'
@@ -19,6 +21,7 @@ import { UpdatePermissionMenuDto } from './dto/update-permission-menu.dto'
 import { PermissionMenuService } from './permission-menu.service'
 
 @Controller('permission-menus')
+@UseInterceptors(ClassSerializerInterceptor)
 export class PermissionMenuController {
   constructor(private readonly permissionMenuService: PermissionMenuService) {}
 
