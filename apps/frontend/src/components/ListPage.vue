@@ -103,10 +103,13 @@
     </a-card>
   </div>
 
-  <a-modal
-    v-model:visible="modalVisible"
-    :title="modalTitle"
-    @before-ok="onModalBeforeOk">
+  <a-modal v-model:visible="modalVisible" @before-ok="onModalBeforeOk">
+    <template #title>
+      <slot name="modal-title" :is-edit="isEdit">
+        <span>{{ modalTitle }}</span>
+      </slot>
+    </template>
+
     <a-form
       ref="create-form"
       :model="[modalFormValue as Record<string, unknown>][0]!"

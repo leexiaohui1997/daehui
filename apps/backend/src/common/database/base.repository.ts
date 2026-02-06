@@ -97,7 +97,13 @@ export class BaseRepository<T extends ObjectLiteral> extends Repository<T> {
    * @param dto 分页 DTO
    */
   async findListByDto(dto: PaginationDto, options?: FindManyOptions<T>) {
-    const { page = 1, pageSize = 10, sort = [], conditions = [] } = dto
+    const {
+      page = 1,
+      pageSize = 10,
+      sort = [],
+      conditions = [],
+      includes = [],
+    } = dto
     const skip = (page - 1) * pageSize
 
     const transformedConditions = (
@@ -110,6 +116,16 @@ export class BaseRepository<T extends ObjectLiteral> extends Repository<T> {
       return { list, total }
     }
 
+    let relations = this.metadata.relations.map(item => item.propertyName)
+    if (includes.length && relations.length) {
+      relations = relations.filter(item => {
+        const name = this.metadata.relations.find(
+          v => v.joinTableName === item,
+        )?.propertyName
+        return name && includes.includes(name)
+      })
+    }
+
     const [list, total] = await this.findAndCount({
       where: ConditionUtils.parse<T>(transformedConditions),
       order: sort.reduce((acc, item) => {
@@ -120,7 +136,9 @@ export class BaseRepository<T extends ObjectLiteral> extends Repository<T> {
       }, {}),
       skip,
       take: pageSize,
+      select: includes,
       ...options,
+      relations,
     })
     return { list, total }
   }

@@ -36,6 +36,7 @@ export const MENU_CONFIGS: Record<MenuType, MenuItemRaw[]> = {
         {
           title: '用户配置',
           name: 'user-config',
+          path: '/admin/role/user',
         },
       ],
     },

@@ -70,6 +70,15 @@ export class PaginationDto {
   conditions?: string[] = []
 
   /**
+   * 包含字段
+   * @default ''
+   */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  includes?: string[] = []
+
+  /**
    * 跳过的条数
    */
   get skip(): number {

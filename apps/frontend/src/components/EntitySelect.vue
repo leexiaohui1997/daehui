@@ -10,6 +10,7 @@
 import { Message } from '@arco-design/web-vue'
 import {
   getErrorMsg,
+  joinCondition,
   OperateEnum,
   PaginationParams,
   PaginationResponse,
@@ -29,6 +30,7 @@ const props = withDefaults(
     valueFormat?: (item: T) => string
     defaultConditions?: string[]
     defaultSort?: { field: string; order: SortOrderValue }[]
+    defaultIncludes?: string[]
     multiple?: boolean
     placeholder?: string
   }>(),
@@ -39,6 +41,7 @@ const props = withDefaults(
     valueFormat: undefined,
     defaultConditions: () => [],
     defaultSort: () => [],
+    defaultIncludes: undefined,
     multiple: false,
     placeholder: '请选择',
   },
@@ -57,11 +60,13 @@ const fetchOptions = async (keyword?: string) => {
     const conditions = [...props.defaultConditions].filter(Boolean)
     if (keyword) {
       conditions.push(
-        JSON.stringify({
-          field: props.labelKey,
-          operate: OperateEnum.LikeLeft,
-          value: keyword,
-        }),
+        joinCondition([
+          {
+            field: props.labelKey,
+            operate: OperateEnum.LikeLeft,
+            values: [keyword],
+          },
+        ]),
       )
     }
 
@@ -70,6 +75,11 @@ const fetchOptions = async (keyword?: string) => {
       pageSize: 50, // Limit results for select
       conditions,
       sort: props.defaultSort,
+      includes: [
+        props.valueKey,
+        props.labelKey,
+        ...(props.defaultIncludes || []),
+      ],
     })
 
     options.value = res.list

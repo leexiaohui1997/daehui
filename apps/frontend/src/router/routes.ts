@@ -36,6 +36,14 @@ export const routes: RouteRecordRaw[] = [
           belongMenu: 'role-config',
         },
       },
+      {
+        path: 'role/user',
+        name: 'RoleUserList',
+        component: () => import('@/views/permission/UserList.vue'),
+        meta: {
+          belongMenu: 'user-config',
+        },
+      },
     ],
   },
   {
